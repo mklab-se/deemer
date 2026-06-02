@@ -1,62 +1,62 @@
-# Installing rusty-tmpl
+# Installing deemer
 
-> `rusty-tmpl` is a template — these instructions become real once you publish your renamed tool.
-> Until then they document the install paths the release pipeline sets up.
+> **Note:** `deemer` hasn't shipped its first release yet — these install paths go live once
+> `v0.1.0` is tagged and the release pipeline publishes to crates.io and the Homebrew tap.
 
 ## Homebrew (macOS / Linux)
 
 ```sh
-brew install mklab-se/tap/rusty-tmpl
+brew install mklab-se/tap/deemer
 ```
 
 Or add the tap once, then install:
 
 ```sh
 brew tap mklab-se/tap
-brew install rusty-tmpl
+brew install deemer
 ```
 
-Upgrade with `brew upgrade rusty-tmpl`.
+Upgrade with `brew upgrade deemer`.
 
 ## Cargo (from crates.io)
 
 ```sh
-cargo install rusty-tmpl
+cargo install deemer
 ```
 
 ## cargo-binstall (prebuilt binaries, no compilation)
 
 ```sh
-cargo binstall rusty-tmpl
+cargo binstall deemer
 ```
 
 ## Prebuilt binaries (GitHub Releases)
 
 Download the archive for your platform from the
-[latest release](https://github.com/mklab-se/rusty-tmpl/releases/latest), extract it, and put the
-`rusty-tmpl` binary somewhere on your `PATH`:
+[latest release](https://github.com/mklab-se/deemer/releases/latest), extract it, and put the
+`deemer` binary somewhere on your `PATH`:
 
 | Platform | Archive |
 | --- | --- |
-| Linux (x86-64) | `rusty-tmpl-vX.Y.Z-x86_64-unknown-linux-gnu.tar.gz` |
-| macOS (Apple Silicon) | `rusty-tmpl-vX.Y.Z-aarch64-apple-darwin.tar.gz` |
-| macOS (Intel) | `rusty-tmpl-vX.Y.Z-x86_64-apple-darwin.tar.gz` |
-| Windows (x86-64) | `rusty-tmpl-vX.Y.Z-x86_64-pc-windows-msvc.zip` |
+| Linux (x86-64) | `deemer-vX.Y.Z-x86_64-unknown-linux-gnu.tar.gz` |
+| macOS (Apple Silicon) | `deemer-vX.Y.Z-aarch64-apple-darwin.tar.gz` |
+| macOS (Intel) | `deemer-vX.Y.Z-x86_64-apple-darwin.tar.gz` |
+| Windows (x86-64) | `deemer-vX.Y.Z-x86_64-pc-windows-msvc.zip` |
 
 ## From source
 
 ```sh
-git clone https://github.com/mklab-se/rusty-tmpl
-cd rusty-tmpl
-cargo install --path crates/rusty-tmpl
+git clone https://github.com/mklab-se/deemer
+cd deemer
+cargo install --path crates/deemer
 ```
 
 ## Shell completions
 
 ```sh
 # Static script (write it where your shell loads completions)
-rusty-tmpl completion zsh > ~/.zfunc/_rusty-tmpl
+deemer completion zsh > ~/.zfunc/_deemer
 
 # Or dynamic completions (re-evaluated on each tab)
-source <(COMPLETE=zsh rusty-tmpl)
+source <(COMPLETE=zsh deemer)
 ```

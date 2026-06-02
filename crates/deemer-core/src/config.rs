@@ -1,7 +1,7 @@
 //! Tool configuration.
 //!
 //! A minimal, reusable starting point: a YAML config stored in the platform
-//! config directory (`~/.config/rusty-tmpl/config.yaml` on Linux/macOS). No
+//! config directory (`~/.config/deemer/config.yaml` on Linux/macOS). No
 //! command uses it yet — it's here so a new tool has somewhere obvious to grow
 //! its settings. Add fields to [`Config`] and they round-trip automatically.
 
@@ -23,7 +23,7 @@ impl Config {
     /// Return the path to the config file, creating no files.
     pub fn config_path() -> Result<PathBuf> {
         let dir = dirs::config_dir().ok_or(Error::NoConfigDir)?;
-        Ok(dir.join("rusty-tmpl").join("config.yaml"))
+        Ok(dir.join("deemer").join("config.yaml"))
     }
 
     /// Load the config from disk. Returns [`Config::default`] if no file exists yet.

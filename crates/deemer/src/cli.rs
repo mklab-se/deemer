@@ -3,14 +3,17 @@
 use anyhow::Result;
 use clap::Parser;
 
-/// A template for building Rust command-line tools.
+/// Run AI-assisted integration tests that judge whether your tests passed.
 #[derive(Parser)]
-#[command(name = "rusty-tmpl")]
+#[command(name = "deemer")]
 #[command(author, version, about)]
-#[command(long_about = "A template for building Rust command-line tools.\n\n\
+#[command(
+    long_about = "deemer runs AI-assisted integration tests — when verifying \
+    whether a test or test suite worked needs AI judgement rather than a simple assertion.\n\n\
     Run without a subcommand to print \"Hello world!\". The reusable plumbing — \
     AI integration, shell completions, and versioning — is wired up so you can \
-    focus on your tool's own commands.")]
+    focus on deemer's own commands."
+)]
 #[command(propagate_version = true)]
 pub struct Cli {
     /// Increase output verbosity (-v for debug, -vv for trace)
@@ -55,17 +58,17 @@ pub enum AiCommands {
         /// Message to send (default: "Say hello in one sentence.")
         message: Option<String>,
     },
-    /// Enable AI features for rusty-tmpl
+    /// Enable AI features for deemer
     Enable,
-    /// Disable AI features for rusty-tmpl
+    /// Disable AI features for deemer
     Disable,
     /// Interactively configure AI provider and model settings
     Config,
-    /// Show AI status (same as running `rusty-tmpl ai` without a subcommand)
+    /// Show AI status (same as running `deemer ai` without a subcommand)
     Status,
 }
 
-/// Shells supported by `rusty-tmpl completion`.
+/// Shells supported by `deemer completion`.
 #[derive(Clone, Copy, clap::ValueEnum)]
 pub enum Shell {
     Bash,

@@ -4,7 +4,7 @@ description: "Release a new version: bump version, update docs, commit, push, an
 argument-hint: "<major|minor|patch>"
 ---
 
-Release a new version of rusty-tmpl.
+Release a new version of deemer.
 
 ## Input
 
@@ -19,7 +19,7 @@ $ARGUMENTS must be one of: `major`, `minor`, `patch`. If empty or invalid, stop 
   - `patch`: 0.1.0 -> 0.1.1
   - `minor`: 0.1.0 -> 0.2.0
   - `major`: 0.1.0 -> 1.0.0
-- Show the user: "Releasing rusty-tmpl v{OLD} -> v{NEW}"
+- Show the user: "Releasing deemer v{OLD} -> v{NEW}"
 
 ### 2. Update dependencies
 
@@ -35,7 +35,7 @@ $ARGUMENTS must be one of: `major`, `minor`, `patch`. If empty or invalid, stop 
 ### 4. Bump version numbers
 
 - Update `version` in the root `Cargo.toml` `[workspace.package]` section
-- Update internal crate dependency versions (`rusty-tmpl-core`) in the root `Cargo.toml`
+- Update internal crate dependency versions (`deemer-core`) in the root `Cargo.toml`
   `[workspace.dependencies]` section — they use `version = "X.Y.Z"` format
 
 ### 5. Update documentation

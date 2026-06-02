@@ -1,8 +1,8 @@
 [workspace]
 resolver = "2"
 members = [
-    "crates/rusty-tmpl",
-    "crates/rusty-tmpl-core",
+    "crates/deemer",
+    "crates/deemer-core",
 ]
 
 [workspace.package]
@@ -10,12 +10,12 @@ version = "0.1.0"
 edition = "2024"
 authors = ["Kristofer Liljeblad <kristofer@mklab.se>"]
 license = "MIT"
-repository = "https://github.com/mklab-se/rusty-tmpl"
+repository = "https://github.com/mklab-se/deemer"
 rust-version = "1.85"
 
 [workspace.dependencies]
 # Internal crates
-rusty-tmpl-core = { version = "0.1.0", path = "crates/rusty-tmpl-core" }
+deemer-core = { version = "0.1.0", path = "crates/deemer-core" }
 
 # CLI
 clap = { version = "4.5", features = ["derive", "env", "wrap_help"] }
