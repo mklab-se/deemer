@@ -204,13 +204,12 @@ fn default_fragment(t: &TestRecord) -> String {
         .exit_code
         .map(|c| c.to_string())
         .unwrap_or_else(|| "—".to_string());
-    let ai_line = t
-        .ai
-        .as_ref()
-        .and_then(|ai| ai.outputs.get("reason"))
-        .and_then(|r| r.as_str())
-        .map(|r| format!(", AI: {r}"))
-        .unwrap_or_default();
+    let ai_line =
+        t.ai.as_ref()
+            .and_then(|ai| ai.outputs.get("reason"))
+            .and_then(|r| r.as_str())
+            .map(|r| format!(", AI: {r}"))
+            .unwrap_or_default();
     format!(
         "### Test {} — {}\n- Command: `{}`\n- Exit {} ({} ms){}\n- `{}` → {}",
         t.test_number,

@@ -8,14 +8,13 @@
 //!
 //! Literal braces are written `{{` and `}}`.
 
-use crate::value::{value_to_literal, Map};
+use crate::value::{Map, value_to_literal};
 use serde_json::Value;
 
 /// Render a template, substituting `{name}` with each variable's text value.
 /// Returns an error if a referenced variable is missing or a brace is unclosed.
 pub fn render(template: &str, vars: &Map) -> crate::Result<String> {
-    scan(template, |name| vars.get(name).map(value_text))
-        .map_err(crate::Error::Template)
+    scan(template, |name| vars.get(name).map(value_text)).map_err(crate::Error::Template)
 }
 
 /// Render an assert expression with typed literals substituted in, for display in
@@ -95,7 +94,10 @@ mod tests {
     #[test]
     fn substitutes_and_escapes() {
         assert_eq!(render("hi {name}, n={n}", &vars()).unwrap(), "hi Ada, n=3");
-        assert_eq!(render("literal {{name}}", &vars()).unwrap(), "literal {name}");
+        assert_eq!(
+            render("literal {{name}}", &vars()).unwrap(),
+            "literal {name}"
+        );
     }
 
     #[test]
@@ -105,7 +107,8 @@ mod tests {
 
     #[test]
     fn substitute_for_log_elides() {
-        let v: Map = serde_json::from_value(json!({"exit_code": 0, "stdout": "x".repeat(80)})).unwrap();
+        let v: Map =
+            serde_json::from_value(json!({"exit_code": 0, "stdout": "x".repeat(80)})).unwrap();
         let s = substitute_for_log("{exit_code} == 0 && {stdout}.contains(\"x\")", &v);
         assert!(s.starts_with("0 == 0"));
         assert!(s.contains("…"));

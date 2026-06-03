@@ -5,7 +5,7 @@
 //! and each referenced variable is bound into the context with its typed value
 //! (via [`crate::value::json_to_cel`]). The result must be a boolean.
 
-use crate::value::{json_to_cel, Map};
+use crate::value::{Map, json_to_cel};
 use cel_interpreter::{Context, Program, Value as Cel};
 use regex::Regex;
 
@@ -29,7 +29,10 @@ pub fn evaluate(expr: &str, vars: &Map) -> crate::Result<bool> {
     }
 
     let program = Program::compile(&cel_src).map_err(|e| crate::Error::Expr(e.to_string()))?;
-    match program.execute(&ctx).map_err(|e| crate::Error::Expr(e.to_string()))? {
+    match program
+        .execute(&ctx)
+        .map_err(|e| crate::Error::Expr(e.to_string()))?
+    {
         Cel::Bool(b) => Ok(b),
         other => Err(crate::Error::Expr(format!(
             "expression did not evaluate to a boolean: {other:?}"
@@ -60,8 +63,15 @@ mod tests {
 
     #[test]
     fn string_methods_and_failure() {
-        let vars = v(json!({"exit_code": 2, "stdout": "Usage: tool", "code": 2, "needle": "Usage"}));
-        assert!(evaluate("{exit_code} == {code} && {stdout}.contains({needle})", &vars).unwrap());
+        let vars =
+            v(json!({"exit_code": 2, "stdout": "Usage: tool", "code": 2, "needle": "Usage"}));
+        assert!(
+            evaluate(
+                "{exit_code} == {code} && {stdout}.contains({needle})",
+                &vars
+            )
+            .unwrap()
+        );
         let fail = v(json!({"ai_passed": false}));
         assert!(!evaluate("{ai_passed} == true", &fail).unwrap());
     }

@@ -84,7 +84,10 @@ mod tests {
 
     #[test]
     fn converts_to_cel() {
-        assert!(matches!(json_to_cel(&json!(5)), cel_interpreter::Value::Int(5)));
+        assert!(matches!(
+            json_to_cel(&json!(5)),
+            cel_interpreter::Value::Int(5)
+        ));
         assert!(matches!(
             json_to_cel(&json!(true)),
             cel_interpreter::Value::Bool(true)

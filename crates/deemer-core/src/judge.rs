@@ -17,8 +17,14 @@ pub type Outputs = IndexMap<String, OutputSpec>;
 /// The default outputs when an `ai:` block declares none: a verdict + a reason.
 pub fn default_outputs() -> Outputs {
     let mut m = Outputs::new();
-    m.insert("ai_passed".to_string(), OutputSpec::Terse("boolean".to_string()));
-    m.insert("reason".to_string(), OutputSpec::Terse("string".to_string()));
+    m.insert(
+        "ai_passed".to_string(),
+        OutputSpec::Terse("boolean".to_string()),
+    );
+    m.insert(
+        "reason".to_string(),
+        OutputSpec::Terse("string".to_string()),
+    );
     m
 }
 

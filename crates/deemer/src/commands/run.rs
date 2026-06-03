@@ -4,17 +4,17 @@
 //! it spawns the command per data row (with timeout, concurrency, and rate-limit
 //! spacing), calls the model for AI evaluations, and assembles the results log.
 
-use anyhow::{anyhow, Context, Result};
+use anyhow::{Context, Result, anyhow};
 use chrono::Utc;
 use deemer_core::judge::{build_prompt, default_outputs, parse_reply};
 use deemer_core::results::{
-    AiInfo, AiRecord, AssertRecord, Execution, RunInfo, RunResults, SettingsInfo, Status, Summary,
-    SuiteInfo, TestRecord,
+    AiInfo, AiRecord, AssertRecord, Execution, RunInfo, RunResults, SettingsInfo, Status,
+    SuiteInfo, Summary, TestRecord,
 };
 use deemer_core::suite::{RateLimit, Suite};
 use deemer_core::value::Map;
 use deemer_core::{check, expr, template};
-use serde_json::{json, Value};
+use serde_json::{Value, json};
 use std::path::{Path, PathBuf};
 use std::process::Stdio;
 use std::sync::Arc;
@@ -178,9 +178,18 @@ pub async fn run(
     };
 
     // Resolve output paths, build the log, and write both artifacts.
-    let report_path = resolve_output(report_override, report_cfg(&suite), &suite_path, "report.md");
-    let results_path =
-        resolve_output(results_override, results_cfg(&suite), &suite_path, "results.yml");
+    let report_path = resolve_output(
+        report_override,
+        report_cfg(&suite),
+        &suite_path,
+        "report.md",
+    );
+    let results_path = resolve_output(
+        results_override,
+        results_cfg(&suite),
+        &suite_path,
+        "results.yml",
+    );
 
     let summary = Summary {
         total,
@@ -229,10 +238,7 @@ pub async fn run(
     write_artifact(&results_path, &results.to_yaml()?)?;
     write_artifact(&report_path, &report_md)?;
 
-    println!(
-        "{passed}/{total} passed — status: {}",
-        status_str(status)
-    );
+    println!("{passed}/{total} passed — status: {}", status_str(status));
     println!("results: {}", results_path.display());
     println!("report:  {}", report_path.display());
     if let Some(e) = &suite_error {
@@ -497,12 +503,11 @@ async fn reserve_rate_slot(next_start: &Mutex<Instant>, interval: Duration) {
 fn render_suite_context(tests: &[TestRecord]) -> String {
     let mut s = format!("{} tests:\n", tests.len());
     for t in tests {
-        let reason = t
-            .ai
-            .as_ref()
-            .and_then(|ai| ai.outputs.get("reason"))
-            .and_then(|r| r.as_str())
-            .unwrap_or("");
+        let reason =
+            t.ai.as_ref()
+                .and_then(|ai| ai.outputs.get("reason"))
+                .and_then(|r| r.as_str())
+                .unwrap_or("");
         s.push_str(&format!(
             "- test {} [{}] exit={:?}: {}\n",
             t.test_number,
@@ -515,10 +520,7 @@ fn render_suite_context(tests: &[TestRecord]) -> String {
 }
 
 fn report_cfg(suite: &Suite) -> Option<&str> {
-    suite
-        .report
-        .as_ref()
-        .and_then(|r| r.path.as_deref())
+    suite.report.as_ref().and_then(|r| r.path.as_deref())
 }
 
 fn results_cfg(suite: &Suite) -> Option<&str> {
