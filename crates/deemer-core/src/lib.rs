@@ -7,7 +7,14 @@
 //!
 //! deemer's domain logic — test-run models, AI judgement, and verdicts — lives here.
 
+pub mod check;
 pub mod config;
 pub mod error;
+pub mod expr;
+pub mod judge;
+pub mod results;
+pub mod suite;
+pub mod template;
+pub mod value;
 
 pub use error::{Error, Result};
