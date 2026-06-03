@@ -207,8 +207,8 @@ suite:
         suite_passed: boolean
         executive_summary: string                       # rendered at the top of the report
         risk_areas: { type: list, items: string }
-    assert:
-      expression: '{suite_passed} == true'
+  assert:
+    expression: '{suite_passed} == true'
 ```
 
 The suite assert sees the aggregate variables `{total}`, `{passed}`, `{failed}`, `{errored}`,

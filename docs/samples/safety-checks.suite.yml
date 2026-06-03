@@ -65,8 +65,8 @@ suite:
           type: list
           items: string
           description: "themes where the tool is weakest"
-    assert:
-      expression: '{suite_passed} == true'
+  assert:
+    expression: '{suite_passed} == true'
 
 report:
   path: "reports/safety-checks.md"

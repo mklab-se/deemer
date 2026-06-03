@@ -101,8 +101,8 @@ suite:
           type: list
           items: string
           description: "themes where the tool is weakest"
-    assert:
-      expression: '{suite_passed} == true'
+  assert:
+    expression: '{suite_passed} == true'
 
 report:
   # OPTIONAL. Omit `path` and Deemer derives one from the suite filename; omit the
