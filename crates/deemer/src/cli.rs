@@ -48,6 +48,21 @@ pub enum Commands {
         shell: Shell,
     },
 
+    /// Run a test suite and write its results log + report
+    Run {
+        /// Path to the suite file (e.g. checks.suite.yml)
+        suite: PathBuf,
+        /// Override the report output path for this run
+        #[arg(long)]
+        report: Option<PathBuf>,
+        /// Override the results-log output path for this run
+        #[arg(long)]
+        results: Option<PathBuf>,
+        /// Override the suite's concurrency for this run
+        #[arg(long)]
+        concurrency: Option<usize>,
+    },
+
     /// Validate a test suite without running it
     Check {
         /// Path to the suite file (e.g. checks.suite.yml)
@@ -93,6 +108,12 @@ impl Cli {
                 crate::commands::completion::generate_completions(shell);
                 Ok(())
             }
+            Some(Commands::Run {
+                suite,
+                report,
+                results,
+                concurrency,
+            }) => crate::commands::run::run(suite, report, results, concurrency).await,
             Some(Commands::Check { suite }) => crate::commands::check::run(suite).await,
             Some(Commands::Version) => {
                 crate::banner::print_banner_with_version();
