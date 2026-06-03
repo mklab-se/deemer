@@ -9,11 +9,10 @@ use std::path::PathBuf;
 #[command(name = "deemer")]
 #[command(author, version, about)]
 #[command(
-    long_about = "deemer runs AI-assisted integration tests — when verifying \
-    whether a test or test suite worked needs AI judgement rather than a simple assertion.\n\n\
-    Run without a subcommand to print \"Hello world!\". The reusable plumbing — \
-    AI integration, shell completions, and versioning — is wired up so you can \
-    focus on deemer's own commands."
+    long_about = "deemer runs AI-assisted integration tests — when deciding whether a \
+    test or test suite worked needs AI judgement rather than a plain assertion.\n\n\
+    Run a suite with `deemer run <suite.yml>`, or validate one with `deemer check \
+    <suite.yml>`. See the docs and samples for the suite format."
 )]
 #[command(propagate_version = true)]
 pub struct Cli {
@@ -119,10 +118,13 @@ impl Cli {
                 crate::banner::print_banner_with_version();
                 Ok(())
             }
-            // No subcommand: the almost-empty default. Replace this with your
-            // tool's behavior, or route to a real command. `--help` still works.
+            // No subcommand: show the banner and point at the real commands.
+            // `--help` still works via clap.
             None => {
-                println!("Hello world!");
+                crate::banner::print_banner_with_version();
+                println!("Run a suite with:  deemer run <suite.yml>");
+                println!("Validate one with: deemer check <suite.yml>");
+                println!("More:              deemer --help");
                 Ok(())
             }
         }

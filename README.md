@@ -86,10 +86,11 @@ human-readable **report** rendered from it. The log is the source of truth; the 
 
 ## Status
 
-> **Early and in active development.** The **suite/results format is designed** (see the docs and
-> samples below) and the plumbing — CLI, AI integration, release pipeline — is in place. The
-> test-*running* commands are being built now; today the bare binary still prints `Hello world!`. The
-> `ai` and `completion` subcommands already work. Watch the repo for the first runnable release.
+> **v1 runner landed; early but usable.** `deemer run <suite.yml>` and `deemer check <suite.yml>` are
+> implemented — deterministic *and* AI-judged suites run, producing a results log and a report, with a
+> `0`/`1`/`2` exit code for CI. AI evaluation uses your configured [Ailloy](https://crates.io/crates/ailloy)
+> model. Rough edges remain (e.g. `working_dir`/`env` suite fields and per-test model overrides are not
+> yet wired — use the shell command inline for now). Expect changes before a tagged release.
 
 ## Getting started
 
