@@ -7,6 +7,9 @@
 
 use serde_json::Value;
 
+/// A bag of variables (Deemer's flat namespace) keyed by name.
+pub type Map = serde_json::Map<String, Value>;
+
 /// The Deemer type name for a value, matching the `expected_outputs` vocabulary.
 pub fn type_name(v: &Value) -> &'static str {
     match v {

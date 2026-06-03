@@ -28,6 +28,10 @@ pub enum Error {
     #[error("invalid rate_limit: {0}")]
     RateLimit(String),
 
+    /// A template referenced an unknown variable or was malformed.
+    #[error("template error: {0}")]
+    Template(String),
+
     /// An assert expression failed to compile or evaluate.
     #[error("expression error: {0}")]
     Expr(String),
