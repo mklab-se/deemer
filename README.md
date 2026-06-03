@@ -10,92 +10,137 @@
 
 # deemer
 
-**Run AI-assisted integration tests that judge whether your tests passed.** `deemer` is for the cases
-where deciding whether a test — or a whole test suite — actually *worked* needs AI judgement rather
-than a plain pass/fail assertion.
+**Integration tests, judged by AI.** Deemer runs a command against a list of inputs and decides whether
+each run — and the suite as a whole — passed. When a plain `assertEquals` can't capture "did this
+*actually* work?", you let a model judge it, and you still get a deterministic pass/fail and a complete
+audit trail.
 
-> **Status: early.** The binary currently prints `Hello world!` with no subcommand — the
-> test-running and AI-judgement commands are being built on top of the plumbing below. The
-> architecture and full release pipeline are already wired up.
+---
 
-Built on MKLab's shared Rust CLI conventions (the same scaffold behind
-[cosq](https://github.com/mklab-se/cosq), [pidge](https://github.com/mklab-se/pidge), and
-[rigg](https://github.com/mklab-se/rigg)):
+## The problem
 
-- 📦 A Cargo **workspace** (`deemer` binary + `deemer-core` library)
-- 🧰 A [clap](https://docs.rs/clap)-derive CLI with global flags (`-v`, `-q`, `--no-color`) and `--help`
-- 🤖 An `ai` subcommand backed by [**Ailloy**](https://crates.io/crates/ailloy), MKLab's shared AI config
-- 🐚 Static **and** dynamic shell completions
-- 🔔 A background **crates.io update checker**
-- ⚙️ **GitHub Actions** CI (check / test / clippy / fmt) and a release pipeline
-- 🍺 Automated publishing to **crates.io** and **Homebrew**
-- 🪄 A `/release` skill that drives the whole release flow
+Some things are easy to assert: an exit code, an exact string, a JSON field. Many things aren't:
 
-## Build & run
+- Did the chatbot **refuse** the unsafe request — or just crash?
+- Is the support reply **empathetic and on-topic**, with no invented promises?
+- Did the summariser **keep the meaning** while cutting the length?
+- Is the generated README **actually helpful** to a newcomer?
 
-```sh
-cargo run                    # prints "Hello world!"
-cargo run -- --help          # show the CLI help
-cargo run -- version         # banner + version
-cargo run -- ai              # AI status (via Ailloy)
-cargo run -- completion zsh  # generate a zsh completion script
-cargo test --workspace       # run the unit tests
+These are real test cases, and today they're either skipped, checked by brittle keyword matching, or
+left to a human to eyeball. Deemer makes them **first-class, repeatable tests**: you write the
+criteria in plain language, an AI evaluates each run, and an `assert` turns the result into a verdict
+your CI can gate on.
+
+## How it works
+
+A **test suite** is one YAML file. Deemer runs your `command` once per data row, optionally asks an AI
+to evaluate the output, and an `assert` decides pass/fail — for each test and for the suite.
+
+```yaml
+test_suite_format: 1
+name: "Support reply quality"
+description: "supportbot's drafts must be empathetic, on-topic, and make no false promises."
+
+test:
+  command: "supportbot --draft"      # the ticket is piped to stdin (see the `stdin:` rows below)
+  evaluate:
+    ai:
+      prompt: |
+        Judge the drafted support reply. It passes only if it is empathetic, addresses
+        the customer's problem with a concrete next step, and promises nothing it can't keep.
+        Ticket: {stdin}
+        Reply:  {stdout}
+      expected_outputs:
+        ai_passed: boolean
+        reason: string
+    assert:
+      expression: '{exit_code} == 0 && {ai_passed} == true'
+
+suite:
+  assert:
+    expression: '{pass_rate} >= 0.9'     # at least 90% of drafts must pass
+
+data:
+  - stdin: "My order is 3 days late and still not here. This is ridiculous."
+  - stdin: "I was charged twice this month — please fix it."
+  - stdin: "Any plans for a dark mode?"
 ```
 
-### Install
+Run it, and Deemer writes two artifacts: a **results log** (a complete, structured YAML record of every
+run — the command, the output, the AI's full prompt and parsed verdict, and the assert) and a
+human-readable **report** rendered from it. The log is the source of truth; the report is a view.
 
-See [INSTALL.md](INSTALL.md) for Homebrew, `cargo install`, `cargo binstall`, and from-source instructions.
+## Why Deemer
 
-## AI integration (Ailloy)
+- **AI when you need it, deterministic when you don't.** The same suite can mix AI-judged tests and
+  plain `exit_code == 0` checks. No AI? It runs as a fast, ordinary test runner.
+- **You write criteria, not JSON wrangling.** Declare the values you want back; Deemer generates the
+  response format, parses it, and exposes each as a variable your `assert` can use.
+- **One simple syntax.** `{placeholders}` everywhere — in commands, prompts, asserts, and reports.
+- **A real audit trail.** Every AI call's *complete* assembled prompt and reply is stored, so a verdict
+  is never a black box. Re-render different reports from one run without re-executing.
+- **CI-ready.** A single `status: passed|failed|errored` to gate on, plus concurrency and rate-limit
+  controls for suites that hit an API.
+- **Honest about non-determinism.** AI judgement isn't perfectly repeatable; Deemer is built to surface
+  the model's reasoning (and even its own confidence) so you decide how strict to be.
 
-The `ai` subcommand reuses MKLab's shared [Ailloy](https://crates.io/crates/ailloy) configuration
-(`~/.config/ailloy/config.yaml`), so every tool shares the same providers and API keys.
+## Status
+
+> **Early and in active development.** The **suite/results format is designed** (see the docs and
+> samples below) and the plumbing — CLI, AI integration, release pipeline — is in place. The
+> test-*running* commands are being built now; today the bare binary still prints `Hello world!`. The
+> `ai` and `completion` subcommands already work. Watch the repo for the first runnable release.
+
+## Getting started
+
+Install (see [INSTALL.md](INSTALL.md) for Homebrew, `cargo install`, `cargo binstall`, from source):
 
 ```sh
-deemer ai          # show status
-deemer ai config   # interactively configure a provider/model
+cargo install deemer
+```
+
+Then explore the format — these are the best starting points today:
+
+- **[`docs/samples/annotated.suite.yml`](docs/samples/annotated.suite.yml)** — a fully-commented suite touring every feature.
+- **[`docs/samples/`](docs/samples/)** — three focused examples, each paired with the results log it produces.
+- **[`docs/test-suite-config.md`](docs/test-suite-config.md)** — the suite format reference.
+- **[`docs/test-results.md`](docs/test-results.md)** — the results-log reference.
+
+Configure AI once (shared across all MKLab tools via [Ailloy](https://crates.io/crates/ailloy)):
+
+```sh
+deemer ai config   # pick a provider/model interactively
 deemer ai test     # send a test message
-deemer ai enable   # / disable — toggle AI for this tool
+deemer ai          # show status
 ```
-
-To call a model from your own commands, use `ailloy::Client` — see `crates/deemer/src/commands/ai.rs`
-for where the integration lives.
-
-## Releasing
-
-Releases are driven by the [`/release`](.claude/skills/release/SKILL.md) skill (run it in Claude
-Code with `major`, `minor`, or `patch`). It bumps the version, updates the changelog, then commits,
-pushes, and tags `vX.Y.Z`. Pushing the tag triggers `.github/workflows/release.yml`, which:
-
-1. Re-runs the full CI suite
-2. Builds binaries for Linux, macOS (Intel + ARM), and Windows
-3. Creates a GitHub Release with the artifacts
-4. Publishes `deemer-core` then `deemer` to crates.io
-5. Updates the Homebrew formula in [`mklab-se/homebrew-tap`](https://github.com/mklab-se/homebrew-tap)
-
-### Required secrets
-
-Configure these once on the GitHub repository (these are the same secrets used by the other MKLab tools):
-
-| Secret | Where | Purpose | How to create |
-| --- | --- | --- | --- |
-| `CARGO_REGISTRY_TOKEN` | Environment **`crates-io`** | Publish to crates.io | [crates.io/settings/tokens](https://crates.io/settings/tokens) → new token with publish scope |
-| `HOMEBREW_TAP_TOKEN` | Repository secret | Push the formula to the tap | A GitHub PAT with `repo` scope for `mklab-se/homebrew-tap` |
-
-If `HOMEBREW_TAP_TOKEN` is missing, the release still succeeds — the Homebrew step just logs a warning.
 
 ## Development
 
 ```sh
-cargo fmt --all              # format
+cargo run -- --help                       # CLI help
+cargo fmt --all                           # format
 cargo clippy --workspace -- -D warnings   # lint (matches CI)
-cargo test --workspace       # test
+cargo test --workspace                    # test
 ```
 
-The CLI lives in `crates/deemer` and reusable logic in `crates/deemer-core`. To add a
-command: declare it in `cli.rs` (`Commands` enum), add a module under `commands/`, and wire the
-dispatch arm in `Cli::run`. See [CLAUDE.md](CLAUDE.md) for the architecture in more detail.
+The CLI lives in `crates/deemer`; reusable, framework-agnostic logic (config, the suite/results models,
+AI judgement) belongs in `crates/deemer-core`. To add a command: declare it in `cli.rs` (`Commands`
+enum), add a module under `commands/`, and wire the dispatch arm in `Cli::run`. See
+[CLAUDE.md](CLAUDE.md) for the architecture.
+
+## Releasing
+
+Releases are driven by the [`/release`](.claude/skills/release/SKILL.md) skill (run it in Claude Code
+with `major`, `minor`, or `patch`): it bumps the version, updates the changelog, commits, pushes, and
+tags `vX.Y.Z`. Pushing the tag triggers [`release.yml`](.github/workflows/release.yml), which re-runs
+CI, builds binaries for Linux/macOS/Windows, creates a GitHub Release, publishes `deemer-core` then
+`deemer` to crates.io, and updates the Homebrew formula in
+[`mklab-se/homebrew-tap`](https://github.com/mklab-se/homebrew-tap).
+
+Two secrets enable publishing (configured once on the repo): `CARGO_REGISTRY_TOKEN` (in the
+`crates-io` environment) and `HOMEBREW_TAP_TOKEN` (a repo secret). If the Homebrew token is missing the
+release still succeeds — that step just logs a warning.
 
 ## License
 
-[MIT](LICENSE) © Kristofer Liljeblad
+[MIT](LICENSE) © MKLab AB

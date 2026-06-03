@@ -1,0 +1,45 @@
+# Sample suite (v2 format): no AI at all — deterministic rule-based checks.
+# Fake tool: `widgetctl` is a CLI whose subcommands/flags we smoke-test.
+test_suite_format: 1
+
+name: "CLI smoke tests"
+description: >
+  Fast, deterministic checks that widgetctl starts, prints help, reports its version,
+  and rejects unknown flags with a non-zero exit code. No AI required — these gate
+  every commit.
+
+settings:
+  concurrency: 4           # fast & independent — run several at once
+
+test:
+  command: "widgetctl {args}"
+  timeout: 10s
+  evaluate:
+    # No `ai:` block (D10) — purely deterministic. One assert serves every case by
+    # reading that row's own data fields ({code}, {needle}). There is no `expect`
+    # namespace any more (flat namespace, D2) — they are just data fields.
+    assert:
+      expression: '{exit_code} == {code} && {stdout}.contains({needle})'
+
+suite:
+  # Every suite must state an assert (D14). No AI here — just require all tests to
+  # pass, gating on the aggregate vars.
+  assert:
+    expression: '{failed} == 0 && {errored} == 0'
+
+report:
+  path: "reports/cli-smoke.md"
+results:
+  path: "results/cli-smoke.yaml"
+
+data:
+  # Identified by {test_number} 1..N in this order (D16).
+  - args: "--help"
+    code: 0
+    needle: "Usage"
+  - args: "--version"
+    code: 0
+    needle: "widgetctl"
+  - args: "--definitely-not-a-flag"
+    code: 2
+    needle: ""             # empty needle → contains("") is always true; only the code matters

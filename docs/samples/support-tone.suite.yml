@@ -1,0 +1,54 @@
+# Sample suite (v2 format): AI evaluation per test, deterministic threshold for the suite.
+# Fake tool: `supportbot --draft` reads a customer ticket on stdin and drafts a reply.
+test_suite_format: 1
+
+name: "Support reply tone & helpfulness"
+description: >
+  Checks that supportbot's drafted replies are empathetic, professional, factually
+  cautious (no invented promises), and actually address the customer's problem. At
+  least 90% of drafts must pass for the suite to be green.
+
+settings:
+  concurrency: 2
+  rate_limit: 20/minute    # many AI calls — keep under the model's rate cap
+
+test:
+  # The ticket is piped on stdin (per-row `stdin:` field, auto-wired); readable as {stdin}.
+  command: "supportbot --draft"
+  timeout: 45s
+  evaluate:
+    ai:
+      prompt: >
+        Judge the drafted support reply. It passes only if it is empathetic and
+        professional in tone, directly addresses the customer's problem with a concrete
+        next step, and makes no promises it cannot keep (no invented refunds, dates, or
+        policies).
+
+        === CUSTOMER TICKET ===
+        {stdin}
+        === DRAFTED REPLY ===
+        {stdout}
+      expected_outputs:
+        ai_passed: boolean
+        reason: string
+    assert:
+      expression: '{ai_passed} == true'
+
+suite:
+  # No AI for the suite — a deterministic threshold over the aggregate vars (D10).
+  # `pass_rate` is one of the suite-aggregate variables (total/passed/failed/errored/pass_rate).
+  assert:
+    expression: '{pass_rate} >= 0.9'
+
+report:
+  path: "reports/support-tone.md"
+results:
+  path: "results/support-tone.yaml"
+
+data:
+  # Identified by {test_number} 1..N in this order (D16).
+  - stdin: "My order #4821 was supposed to arrive 3 days ago and it's still not here. This is ridiculous."
+  - stdin: "I was charged twice for the same subscription this month. Please fix this."
+  - stdin: "Would love a dark mode in the mobile app — any plans for that?"
+  - stdin: "I want to cancel my account and make sure I'm not billed again."
+  - stdin: "Your latest update broke export to PDF and I have a deadline TODAY. Unacceptable."

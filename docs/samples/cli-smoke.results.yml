@@ -1,0 +1,99 @@
+# Results log for cli-smoke.suite.yml (v2 format) — no AI at all, all passed.
+# Deterministic: each test's verdict is purely its assert result (D14). Tests are
+# listed in data-entry order (D17). Note `substituted` elides large stdout (D18).
+results_format: 1
+
+suite:
+  name: "CLI smoke tests"
+  description: >
+    Fast, deterministic checks that widgetctl starts, prints help, reports its version,
+    and rejects unknown flags with a non-zero exit code.
+  config_path: "docs/samples/cli-smoke.suite.yml"
+  config_sha256: "1a2b3c4d5e6f70819203a4b5c6d7e8f90a1b2c3d4e5f60718293a4b5c6d7e8f9"
+  report_path: "reports/cli-smoke.md"
+  results_path: "results/cli-smoke.yaml"
+
+run:
+  started_at: 2026-06-02T21:10:00Z
+  finished_at: 2026-06-02T21:10:01Z
+  duration_ms: 612
+  deemer_version: "0.1.0"
+  settings:
+    concurrency: 4
+    rate_limit: null
+  ai:
+    used: false                  # no AI anywhere in this suite
+
+summary:
+  total: 3
+  passed: 3
+  failed: 0
+  errored: 0
+  pass_rate: 1.0
+  status: passed
+  assert:
+    expression: '{failed} == 0 && {errored} == 0'
+    substituted: '0 == 0 && 0 == 0'
+    result: true
+  # No `ai:` here — the suite verdict is purely deterministic.
+
+tests:
+  - test_number: 1
+    status: passed
+    assert:
+      expression: '{exit_code} == {code} && {stdout}.contains({needle})'
+      substituted: '0 == 0 && "Usage: widgetctl [OPTIONS] <COMMAND>…".contains("Usage")'   # stdout elided (D18)
+      result: true
+    data:
+      args: "--help"
+      code: 0
+      needle: "Usage"
+    command: "widgetctl --help"
+    execution:
+      started_at: 2026-06-02T21:10:00Z
+      exit_code: 0
+      duration_ms: 41
+      timed_out: false
+      stdout: "Usage: widgetctl [OPTIONS] <COMMAND>\n\nOptions:\n  -h, --help     Print help\n  -V, --version  Print version"
+      stderr: ""
+    error: null
+
+  - test_number: 2
+    status: passed
+    assert:
+      expression: '{exit_code} == {code} && {stdout}.contains({needle})'
+      substituted: '0 == 0 && "widgetctl 2.4.1".contains("widgetctl")'                     # small stdout inlined
+      result: true
+    data:
+      args: "--version"
+      code: 0
+      needle: "widgetctl"
+    command: "widgetctl --version"
+    execution:
+      started_at: 2026-06-02T21:10:00Z
+      exit_code: 0
+      duration_ms: 38
+      timed_out: false
+      stdout: "widgetctl 2.4.1"
+      stderr: ""
+    error: null
+
+  - test_number: 3
+    status: passed
+    assert:
+      expression: '{exit_code} == {code} && {stdout}.contains({needle})'
+      substituted: '2 == 2 && "".contains("")'                                             # empty needle always matches
+      result: true
+    data:
+      args: "--definitely-not-a-flag"
+      code: 2
+      needle: ""
+    command: "widgetctl --definitely-not-a-flag"
+    execution:
+      started_at: 2026-06-02T21:10:00Z
+      exit_code: 2
+      duration_ms: 35
+      timed_out: false
+      stdout: ""
+      stderr: "error: unexpected argument '--definitely-not-a-flag' found"
+    error: null
