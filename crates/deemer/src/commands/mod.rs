@@ -4,4 +4,5 @@
 //! [`crate::cli::Cli::run`] when you introduce a new command.
 
 pub mod ai;
+pub mod check;
 pub mod completion;

@@ -2,6 +2,7 @@
 
 use anyhow::Result;
 use clap::Parser;
+use std::path::PathBuf;
 
 /// Run AI-assisted integration tests that judge whether your tests passed.
 #[derive(Parser)]
@@ -47,6 +48,12 @@ pub enum Commands {
         shell: Shell,
     },
 
+    /// Validate a test suite without running it
+    Check {
+        /// Path to the suite file (e.g. checks.suite.yml)
+        suite: PathBuf,
+    },
+
     /// Show version information
     Version,
 }
@@ -86,6 +93,7 @@ impl Cli {
                 crate::commands::completion::generate_completions(shell);
                 Ok(())
             }
+            Some(Commands::Check { suite }) => crate::commands::check::run(suite).await,
             Some(Commands::Version) => {
                 crate::banner::print_banner_with_version();
                 Ok(())
