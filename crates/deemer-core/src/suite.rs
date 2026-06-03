@@ -7,6 +7,7 @@ use indexmap::IndexMap;
 use serde::Deserialize;
 use serde_json::{Map, Value};
 use std::path::Path;
+use std::time::Duration;
 
 /// A complete test suite, deserialized from a `*.suite.yml` file.
 #[derive(Debug, Clone, Deserialize)]
@@ -162,6 +163,34 @@ impl Suite {
     }
 }
 
+/// A parsed `settings.rate_limit`: a minimum spacing between test starts.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct RateLimit {
+    pub min_interval: Duration,
+}
+
+impl RateLimit {
+    /// Parse a `<count>/<unit>` rate (e.g. `10/minute`, `1/s`) into a minimum
+    /// start-spacing of `unit ÷ count`.
+    pub fn parse(s: &str) -> crate::Result<RateLimit> {
+        let err = || crate::Error::RateLimit(s.to_string());
+        let (count_str, unit_str) = s.split_once('/').ok_or_else(err)?;
+        let count: f64 = count_str.trim().parse().map_err(|_| err())?;
+        if count <= 0.0 || !count.is_finite() {
+            return Err(err());
+        }
+        let unit_secs = match unit_str.trim() {
+            "second" | "sec" | "s" => 1.0,
+            "minute" | "min" | "m" => 60.0,
+            "hour" | "hr" | "h" => 3600.0,
+            _ => return Err(err()),
+        };
+        Ok(RateLimit {
+            min_interval: Duration::from_secs_f64(unit_secs / count),
+        })
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -201,6 +230,25 @@ mod tests {
         assert!(matches!(rich, OutputSpec::Rich { .. }));
         assert_eq!(rich.type_name(), "string");
         assert_eq!(rich.values().unwrap().len(), 2);
+    }
+
+    #[test]
+    fn rate_limit_to_interval() {
+        assert_eq!(
+            RateLimit::parse("10/minute").unwrap().min_interval,
+            Duration::from_secs(6)
+        );
+        assert_eq!(
+            RateLimit::parse("1/s").unwrap().min_interval,
+            Duration::from_secs(1)
+        );
+        assert_eq!(
+            RateLimit::parse("120/hour").unwrap().min_interval,
+            Duration::from_secs(30)
+        );
+        assert!(RateLimit::parse("0/minute").is_err());
+        assert!(RateLimit::parse("nonsense").is_err());
+        assert!(RateLimit::parse("5/fortnight").is_err());
     }
 
     #[test]

@@ -23,6 +23,18 @@ pub enum Error {
     /// The platform did not expose a config directory.
     #[error("could not determine the configuration directory")]
     NoConfigDir,
+
+    /// A `settings.rate_limit` value could not be parsed.
+    #[error("invalid rate_limit: {0}")]
+    RateLimit(String),
+
+    /// An assert expression failed to compile or evaluate.
+    #[error("expression error: {0}")]
+    Expr(String),
+
+    /// An AI reply could not be parsed into the declared outputs.
+    #[error("AI reply parse error: {0}")]
+    AiParse(String),
 }
 
 impl From<serde_yaml::Error> for Error {
