@@ -135,9 +135,10 @@ name you declared in `expected_outputs`. `deemer check` flags a collision before
 ### 5.1 AI evaluation (`evaluate.ai`)
 
 You write the **criteria** (`prompt`) and declare the **values you want back** (`expected_outputs`).
-You never write a "respond as JSON" sentence — Deemer generates that instruction from your
-`expected_outputs`, appends the captured output, parses the reply into variables, and stores the
-**complete assembled prompt** in the results log.
+Your `prompt` is a template: place `{stdout}`, `{stdin}`, data fields, etc. wherever you want the
+captured run to appear. You never write a "respond as JSON" sentence — Deemer renders your prompt,
+appends a response instruction it generates from your `expected_outputs`, parses the reply into
+variables, and stores the **complete assembled prompt** in the results log.
 
 ```yaml
 evaluate:
