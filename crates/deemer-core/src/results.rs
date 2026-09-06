@@ -136,7 +136,11 @@ impl RunResults {
 pub fn config_sha256(file_bytes: &[u8]) -> String {
     let mut hasher = Sha256::new();
     hasher.update(file_bytes);
-    format!("{:x}", hasher.finalize())
+    hasher
+        .finalize()
+        .iter()
+        .map(|b| format!("{b:02x}"))
+        .collect()
 }
 
 /// The lowercase string form of a status.
