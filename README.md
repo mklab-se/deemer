@@ -134,9 +134,11 @@ enum), add a module under `commands/`, and wire the dispatch arm in `Cli::run`. 
 Releases are driven by the [`/release`](.claude/skills/release/SKILL.md) skill (run it in Claude Code
 with `major`, `minor`, or `patch`): it bumps the version, updates the changelog, commits, pushes, and
 tags `vX.Y.Z`. Pushing the tag triggers [`release.yml`](.github/workflows/release.yml), which re-runs
-CI, builds binaries for Linux/macOS/Windows, creates a GitHub Release, publishes `deemer-core` then
-`deemer` to crates.io, and updates the Homebrew formula in
-[`mklab-se/homebrew-tap`](https://github.com/mklab-se/homebrew-tap).
+CI, builds [auditable](https://github.com/rust-secure-code/cargo-auditable) binaries for
+Linux/macOS/Windows with a CycloneDX SBOM per target, creates a GitHub Release, publishes
+`deemer-core` then `deemer` to crates.io, and updates the Homebrew formula in
+[`mklab-se/homebrew-tap`](https://github.com/mklab-se/homebrew-tap). See
+[INSTALL.md](INSTALL.md#software-bill-of-materials-sbom) for how to read the SBOM.
 
 Two secrets enable publishing (configured once on the repo): `CARGO_REGISTRY_TOKEN` (in the
 `crates-io` environment) and `HOMEBREW_TAP_TOKEN` (a repo secret). If the Homebrew token is missing the

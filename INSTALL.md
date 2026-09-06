@@ -43,6 +43,26 @@ Download the archive for your platform from the
 | macOS (Intel) | `deemer-vX.Y.Z-x86_64-apple-darwin.tar.gz` |
 | Windows (x86-64) | `deemer-vX.Y.Z-x86_64-pc-windows-msvc.zip` |
 
+## Software bill of materials (SBOM)
+
+Every release asset above has a matching CycloneDX 1.5 SBOM listing the exact crate versions
+compiled into that platform's binary:
+
+```
+deemer-vX.Y.Z-<target>.cdx.json
+```
+
+The binaries are also built with [`cargo auditable`](https://github.com/rust-secure-code/cargo-auditable),
+so the dependency list travels inside the executable itself. Check a downloaded binary against the
+RustSec advisory database with:
+
+```sh
+cargo install cargo-audit --features=fix
+cargo audit bin ./deemer
+```
+
+`syft` and `trivy` also understand this format.
+
 ## From source
 
 ```sh
