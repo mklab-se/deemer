@@ -95,12 +95,12 @@ pub fn parse_reply(raw: &str, outputs: &Outputs) -> crate::Result<Map> {
                 crate::value::type_name(val)
             )));
         }
-        if let Some(allowed) = spec.values() {
-            if !allowed.iter().any(|a| a == val) {
-                return Err(crate::Error::AiParse(format!(
-                    "field `{name}` value {val} is not one of the allowed values"
-                )));
-            }
+        if let Some(allowed) = spec.values()
+            && !allowed.iter().any(|a| a == val)
+        {
+            return Err(crate::Error::AiParse(format!(
+                "field `{name}` value {val} is not one of the allowed values"
+            )));
         }
     }
     Ok(obj.clone())

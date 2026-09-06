@@ -59,7 +59,7 @@ shared global config (`~/.config/ailloy/config.yaml`). To call a model from a co
 
 ## Conventions
 
-- Edition 2024, MSRV 1.85 (`[workspace.package]`).
+- Edition 2024, MSRV 1.88 (`[workspace.package]`).
 - All deps are declared in the root `[workspace.dependencies]` and inherited with `.workspace = true`.
-- CI gates: `cargo fmt --all -- --check`, `cargo clippy --workspace -- -D warnings`, `cargo test --workspace`.
+- CI gates: `cargo fmt --all -- --check`, `cargo clippy --workspace --all-targets -- -D warnings`, `cargo test --workspace`.
 - Releases go through the `/release` skill (`.claude/skills/release/`) → tag push → `release.yml`.

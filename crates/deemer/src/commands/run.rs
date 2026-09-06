@@ -118,44 +118,44 @@ pub async fn run(
 
     let mut suite_ai = None;
     let mut suite_error: Option<String> = None;
-    if let Some(eval) = &suite.suite.evaluation {
-        if let Some(ai) = &eval.ai {
-            let outputs = ai.expected_outputs.clone().unwrap_or_else(default_outputs);
-            svars.insert(
-                "suite_context".to_string(),
-                json!(render_suite_context(&tests)),
-            );
-            match template::render(&ai.prompt, &svars) {
-                Ok(rendered) => {
-                    let full = build_prompt(&rendered, &outputs);
-                    match call_model(&full).await {
-                        Ok(reply) => match parse_reply(&reply, &outputs) {
-                            Ok(parsed) => {
-                                for (k, v) in &parsed {
-                                    svars.insert(k.clone(), v.clone());
-                                }
-                                suite_ai = Some(AiRecord {
-                                    model: MODEL_LABEL.to_string(),
-                                    prompt: full,
-                                    response: reply,
-                                    outputs: parsed,
-                                });
+    if let Some(eval) = &suite.suite.evaluation
+        && let Some(ai) = &eval.ai
+    {
+        let outputs = ai.expected_outputs.clone().unwrap_or_else(default_outputs);
+        svars.insert(
+            "suite_context".to_string(),
+            json!(render_suite_context(&tests)),
+        );
+        match template::render(&ai.prompt, &svars) {
+            Ok(rendered) => {
+                let full = build_prompt(&rendered, &outputs);
+                match call_model(&full).await {
+                    Ok(reply) => match parse_reply(&reply, &outputs) {
+                        Ok(parsed) => {
+                            for (k, v) in &parsed {
+                                svars.insert(k.clone(), v.clone());
                             }
-                            Err(e) => {
-                                suite_error = Some(format!("suite AI reply: {e}"));
-                                suite_ai = Some(AiRecord {
-                                    model: MODEL_LABEL.to_string(),
-                                    prompt: full,
-                                    response: reply,
-                                    outputs: Map::new(),
-                                });
-                            }
-                        },
-                        Err(e) => suite_error = Some(format!("suite AI call: {e}")),
-                    }
+                            suite_ai = Some(AiRecord {
+                                model: MODEL_LABEL.to_string(),
+                                prompt: full,
+                                response: reply,
+                                outputs: parsed,
+                            });
+                        }
+                        Err(e) => {
+                            suite_error = Some(format!("suite AI reply: {e}"));
+                            suite_ai = Some(AiRecord {
+                                model: MODEL_LABEL.to_string(),
+                                prompt: full,
+                                response: reply,
+                                outputs: Map::new(),
+                            });
+                        }
+                    },
+                    Err(e) => suite_error = Some(format!("suite AI call: {e}")),
                 }
-                Err(e) => suite_error = Some(format!("suite prompt template: {e}")),
             }
+            Err(e) => suite_error = Some(format!("suite prompt template: {e}")),
         }
     }
 
@@ -562,11 +562,11 @@ fn suite_basename(suite_path: &Path) -> String {
 
 /// Write a generated artifact, creating parent directories as needed.
 fn write_artifact(path: &Path, contents: &str) -> Result<()> {
-    if let Some(parent) = path.parent() {
-        if !parent.as_os_str().is_empty() {
-            std::fs::create_dir_all(parent)
-                .with_context(|| format!("creating {}", parent.display()))?;
-        }
+    if let Some(parent) = path.parent()
+        && !parent.as_os_str().is_empty()
+    {
+        std::fs::create_dir_all(parent)
+            .with_context(|| format!("creating {}", parent.display()))?;
     }
     std::fs::write(path, contents).with_context(|| format!("writing {}", path.display()))?;
     Ok(())

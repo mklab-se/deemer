@@ -6,16 +6,16 @@ members = [
 ]
 
 [workspace.package]
-version = "0.2.1"
+version = "0.2.2"
 edition = "2024"
 authors = ["Kristofer Liljeblad <kristofer@mklab.se>"]
 license = "MIT"
 repository = "https://github.com/mklab-se/deemer"
-rust-version = "1.85"
+rust-version = "1.88"
 
 [workspace.dependencies]
 # Internal crates
-deemer-core = { version = "0.2.1", path = "crates/deemer-core" }
+deemer-core = { version = "0.2.2", path = "crates/deemer-core" }
 
 # CLI
 clap = { version = "4.6", features = ["derive", "env", "wrap_help"] }

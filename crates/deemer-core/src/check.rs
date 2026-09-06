@@ -57,10 +57,10 @@ pub fn check(suite: &Suite) -> Vec<String> {
     }
 
     // (b) rate_limit must parse.
-    if let Some(rl) = &suite.settings.rate_limit {
-        if let Err(e) = RateLimit::parse(rl) {
-            issues.push(format!("settings.rate_limit: {e}"));
-        }
+    if let Some(rl) = &suite.settings.rate_limit
+        && let Err(e) = RateLimit::parse(rl)
+    {
+        issues.push(format!("settings.rate_limit: {e}"));
     }
 
     // (c) every {var} referenced in an assert/prompt/template must be known.
@@ -83,24 +83,24 @@ pub fn check(suite: &Suite) -> Vec<String> {
     if let Some(out) = &suite.test.output {
         check_refs("test.output", out, &known, &mut issues);
     }
-    if let Some(eval) = &suite.suite.evaluation {
-        if let Some(ai) = &eval.ai {
-            check_refs("suite.ai.prompt", &ai.prompt, &known, &mut issues);
-        }
+    if let Some(eval) = &suite.suite.evaluation
+        && let Some(ai) = &eval.ai
+    {
+        check_refs("suite.ai.prompt", &ai.prompt, &known, &mut issues);
     }
-    if let Some(report) = &suite.report {
-        if let Some(tmpl) = &report.template {
-            check_refs("report.template", tmpl, &known, &mut issues);
-        }
+    if let Some(report) = &suite.report
+        && let Some(tmpl) = &report.template
+    {
+        check_refs("report.template", tmpl, &known, &mut issues);
     }
 
     // (d) report and results must not resolve to the same path.
     let report_path = suite.report.as_ref().and_then(|r| r.path.as_ref());
     let results_path = suite.results.as_ref().and_then(|r| r.path.as_ref());
-    if let (Some(a), Some(b)) = (report_path, results_path) {
-        if a == b {
-            issues.push(format!("report and results resolve to the same path: {a}"));
-        }
+    if let (Some(a), Some(b)) = (report_path, results_path)
+        && a == b
+    {
+        issues.push(format!("report and results resolve to the same path: {a}"));
     }
 
     issues

@@ -28,7 +28,7 @@ $ARGUMENTS must be one of: `major`, `minor`, `patch`. If empty or invalid, stop 
 ### 3. Pre-flight checks
 
 - Run `cargo fmt --all -- --check` — abort if formatting issues
-- Run `cargo clippy --workspace -- -D warnings` — abort if warnings
+- Run `cargo clippy --workspace --all-targets -- -D warnings` — abort if warnings
 - Run `cargo test --workspace` — abort if any test fails
 - Run `git status` — abort if there are uncommitted changes that are NOT documentation or version files
 

@@ -120,7 +120,7 @@ deemer ai          # show status
 ```sh
 cargo run -- --help                       # CLI help
 cargo fmt --all                           # format
-cargo clippy --workspace -- -D warnings   # lint (matches CI)
+cargo clippy --workspace --all-targets -- -D warnings   # lint (matches CI)
 cargo test --workspace                    # test
 ```
 
