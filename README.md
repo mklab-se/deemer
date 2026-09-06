@@ -90,7 +90,7 @@ human-readable **report** rendered from it. The log is the source of truth; the 
 > implemented — deterministic *and* AI-judged suites run, producing a results log and a report, with a
 > `0`/`1`/`2` exit code for CI. AI evaluation uses your configured [Ailloy](https://crates.io/crates/ailloy)
 > model. Rough edges remain (e.g. `working_dir`/`env` suite fields and per-test model overrides are not
-> yet wired — use the shell command inline for now). Expect changes before a tagged release.
+> yet wired — use the shell command inline for now). The suite format may still change before 1.0.
 
 ## Getting started
 

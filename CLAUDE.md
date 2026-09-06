@@ -6,8 +6,8 @@ Guidance for Claude Code (and other agents) working in this repository.
 
 `deemer` is a CLI for running **AI-assisted integration tests** — for cases where deciding whether a
 test or a whole test suite actually "worked" needs AI judgement rather than a plain assertion. The
-binary currently still prints `Hello world!` with no subcommand; the domain logic (test-run models,
-AI judgement, verdicts) is being built on top of the shared MKLab CLI scaffold described below.
+domain logic (suite model, CEL asserts, AI judgement, results logs, reports) lives in `deemer-core`
+and is driven by `deemer run` / `deemer check`, on top of the shared MKLab CLI scaffold described below.
 
 ## Template lineage
 
@@ -36,10 +36,9 @@ A two-crate Cargo workspace:
 - `crates/deemer/` — the CLI binary.
   - `main.rs` — `#[tokio::main]`; sets up logging, dynamic-completion env, the `--no-color` override,
     and spawns the background update check, then calls `Cli::run`.
-  - `cli.rs` — clap-derive `Cli`, `Commands`, `AiCommands`, `Shell`; `Cli::run` dispatches. **The
-    no-subcommand (`None`) arm currently prints `Hello world!`** (inherited from the scaffold) — replace
-    it with deemer's real default once the test-running commands exist. `--help`/`-h` still work via clap.
-  - `commands/` — one module per command (`ai`, `completion`). Add new commands here.
+  - `cli.rs` — clap-derive `Cli`, `Commands`, `AiCommands`, `Shell`; `Cli::run` dispatches. The
+    no-subcommand (`None`) arm prints the banner and usage.
+  - `commands/` — one module per command (`ai`, `completion`, `run`, `check`). Add new commands here.
   - `banner.rs` — ASCII block-letter banner + version line.
   - `update.rs` — polls crates.io, caches the result for 24h, notifies on a newer version.
 - `crates/deemer-core/` — framework-agnostic library (no clap/tokio). deemer's domain logic belongs here.

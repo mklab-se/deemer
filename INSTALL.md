@@ -1,8 +1,5 @@
 # Installing deemer
 
-> **Note:** `deemer` hasn't shipped its first release yet — these install paths go live once
-> `v0.1.0` is tagged and the release pipeline publishes to crates.io and the Homebrew tap.
-
 ## Homebrew (macOS / Linux)
 
 ```sh
