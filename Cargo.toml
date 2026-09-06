@@ -6,7 +6,7 @@ members = [
 ]
 
 [workspace.package]
-version = "0.2.0"
+version = "0.2.1"
 edition = "2024"
 authors = ["Kristofer Liljeblad <kristofer@mklab.se>"]
 license = "MIT"
@@ -15,7 +15,7 @@ rust-version = "1.85"
 
 [workspace.dependencies]
 # Internal crates
-deemer-core = { version = "0.2.0", path = "crates/deemer-core" }
+deemer-core = { version = "0.2.1", path = "crates/deemer-core" }
 
 # CLI
 clap = { version = "4.6", features = ["derive", "env", "wrap_help"] }
@@ -51,7 +51,7 @@ chrono = { version = "0.4", default-features = false, features = ["clock", "serd
 dirs = "7.0"
 
 # AI
-ailloy = { version = "2.0", default-features = false, features = ["config-tui"] }
+ailloy = { version = "2.1", default-features = false, features = ["config-tui"] }
 
 # Test-suite domain logic
 cel-interpreter = "0.10"

@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.1] - 2026-09-07
+
+### Changed
+
+- Ailloy 2.0 → 2.1 (keyring 4, ratatui 0.30 config dashboard, hardened Azure CLI token parsing),
+  plus `cargo update`.
+
 ## [0.2.0] - 2026-09-06
 
 ### Added
@@ -38,5 +45,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   binaries, publishes to crates.io, and updates the Homebrew tap.
 - `/release` skill for cutting versioned releases.
 
+[0.2.1]: https://github.com/mklab-se/deemer/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/mklab-se/deemer/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/mklab-se/deemer/releases/tag/v0.1.0
