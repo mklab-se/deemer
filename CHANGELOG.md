@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Changed
+
+- Ailloy 2.1.0 → 2.1.1 (lockfile-only patch, no API change) plus `cargo update` (clap 4.6.7,
+  clap_complete 4.6.11, rustls 0.23.45, quinn 0.11.12, and other compatible bumps).
+- MSRV stays at 1.88 (set by Ailloy); no direct dependency requires more.
+- CI/release workflows verified against the `rusty-tmpl` template: auditable binaries, per-target
+  CycloneDX SBOMs and Node 24 action majors were already in place, so no workflow change.
+
 ## [0.2.2] - 2026-09-07
 
 ### Changed
