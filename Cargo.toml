@@ -24,13 +24,19 @@ clap_complete = { version = "4.6", features = ["unstable-dynamic"] }
 # Serialization
 serde = { version = "1.0", features = ["derive"] }
 serde_json = { version = "1.0", features = ["preserve_order"] }
+# Stays on 0.9: serde_yaml is deprecated upstream (0.9.34 is the final release) but kept
+# deliberately; the YAML config surface is small and stable. Do not switch without a decision.
 serde_yaml = "0.9"
 
 # Async
 tokio = { version = "1.53", features = ["full"] }
 
 # HTTP
-reqwest = { version = "0.12", default-features = false, features = ["json", "rustls-tls-native-roots"] }
+# rustls-tls-native-roots was renamed rustls in reqwest 0.13; it now validates against the
+# live OS trust store (rustls-platform-verifier) with aws-lc-rs as the crypto provider, which
+# needs NASM + CMake to build on Windows (see the release workflow's "Install NASM" step and
+# INSTALL.md). Ailloy is on the same 0.13 line, so the TLS stack stays shared.
+reqwest = { version = "0.13", default-features = false, features = ["json", "rustls"] }
 
 # Error handling
 anyhow = "1.0"
@@ -51,7 +57,7 @@ chrono = { version = "0.4", default-features = false, features = ["clock", "serd
 dirs = "7.0"
 
 # AI
-ailloy = { version = "2.1", default-features = false, features = ["config-tui"] }
+ailloy = { version = "2.2", default-features = false, features = ["config-tui"] }
 
 # Test-suite domain logic
 cel-interpreter = "0.10"
