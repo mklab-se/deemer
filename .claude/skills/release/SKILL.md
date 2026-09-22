@@ -1,6 +1,6 @@
 ---
 name: release
-description: "Release a new version: bump version, update docs, commit, push, and tag"
+description: "Release a new version: bump version, update docs, commit, push, tag, and verify the release workflow"
 argument-hint: "<major|minor|patch>"
 ---
 
@@ -21,16 +21,22 @@ $ARGUMENTS must be one of: `major`, `minor`, `patch`. If empty or invalid, stop 
   - `major`: 0.1.0 -> 1.0.0
 - Show the user: "Releasing deemer v{OLD} -> v{NEW}"
 
-### 2. Update dependencies
+### 2. Update toolchain and dependencies
 
+- Run `rustup update stable` — CI runs the LATEST stable Rust, and newer clippy versions ship new
+  lints. Running the pre-flight checks on an older local toolchain lets warnings through that then
+  fail the release workflow. After updating, confirm with `rustc --version`
 - Run `cargo update` to update all dependencies to their latest compatible versions
 
 ### 3. Pre-flight checks
 
-- Run `cargo fmt --all -- --check` — abort if formatting issues
+- Run `cargo fmt --all -- --check` — abort if formatting issues. If you fix formatting with
+  `cargo fmt --all`, re-run clippy afterwards: reformatting can change what clippy flags
 - Run `cargo clippy --workspace --all-targets -- -D warnings` — abort if warnings
+  (`--all-targets` matches CI: it also lints tests and benches)
 - Run `cargo test --workspace` — abort if any test fails
-- Run `git status` — abort if there are uncommitted changes that are NOT documentation or version files
+- Run `git status` — abort if there are uncommitted changes that are NOT documentation, version,
+  or dependency files
 
 ### 4. Bump version numbers
 
@@ -57,9 +63,21 @@ $ARGUMENTS must be one of: `major`, `minor`, `patch`. If empty or invalid, stop 
 - Push to main: `git push`
 - Create and push tag: `git tag v{NEW_VERSION} && git push origin v{NEW_VERSION}`
 
-### 8. Confirm
+### 8. Watch and verify
 
-- Tell the user the release is tagged and pushed
-- Remind them that the GitHub Actions release workflow will now build binaries, publish to crates.io, and update the Homebrew tap
+- The tag push triggers the Release workflow. Do NOT declare success yet — watch it:
+  `gh run list --repo mklab-se/deemer --workflow release.yml --limit 1`, then
+  `gh run watch <id> --repo mklab-se/deemer --exit-status` until it completes
+- If it fails, inspect with `gh run view <id> --log-failed`, fix the cause, and re-release as a patch
+- When it is green, confirm the outputs:
+  - `gh release view v{NEW_VERSION} --repo mklab-se/deemer` lists 4 archives
+    (3 × `.tar.gz`, 1 × `.zip`) plus 4 matching `.cdx.json` SBOMs
+  - `cargo search deemer --limit 1` shows the new version on crates.io
+  - `Formula/deemer.rb` in `mklab-se/homebrew-tap` carries the new version
+
+### 9. Confirm
+
+- Tell the user the release is tagged, pushed, and the workflow is green — auditable binaries and
+  SBOMs are attached to the GitHub Release, crates.io is published, and the Homebrew tap is updated
 - The publish jobs require the `CARGO_REGISTRY_TOKEN` (in the `crates-io` environment) and
   `HOMEBREW_TAP_TOKEN` (repo secret) to be configured — see README.md

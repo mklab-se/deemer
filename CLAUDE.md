@@ -65,7 +65,14 @@ shared global config (`~/.config/ailloy/config.yaml`). To call a model from a co
 
 ## Conventions
 
-- Edition 2024, MSRV 1.88 (`[workspace.package]`).
+- Edition 2024, MSRV 1.88 (`[workspace.package]`; set by Ailloy 2.x).
 - All deps are declared in the root `[workspace.dependencies]` and inherited with `.workspace = true`.
-- CI gates: `cargo fmt --all -- --check`, `cargo clippy --workspace --all-targets -- -D warnings`, `cargo test --workspace`.
-- Releases go through the `/release` skill (`.claude/skills/release/`) → tag push → `release.yml`.
+  `reqwest` stays on 0.12 (shares Ailloy's TLS stack; 0.13 needs cmake/NASM on Windows) and
+  `serde_yaml` on 0.9.
+- CI gates: `cargo fmt --all -- --check`, `cargo clippy --workspace --all-targets -- -D warnings`,
+  `cargo test --workspace`. CI runs the latest stable toolchain, so run the gates on an up-to-date
+  local toolchain (new clippy lints otherwise surface only in CI).
+- Releases go through the `/release` skill (`.claude/skills/release/`) → tag push → `release.yml`. The
+  skill updates the toolchain and dependencies first, then watches the workflow. `release.yml` builds
+  binaries with `cargo auditable` and attaches a per-target CycloneDX SBOM (`.cdx.json`) to the
+  GitHub Release alongside the archives.

@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Changed
+
+- Ailloy 2.1.1 → 2.1.2 (lockfile refresh + CI/release-process migration only, no API change) plus
+  `cargo update` (serde 1.0.229, serde_json 1.0.151, hyper-rustls 0.27.10, and other compatible
+  bumps).
+- MSRV stays at 1.88; no direct dependency requires more (highest declared MSRV among direct
+  dependencies is Ailloy's own 1.88).
+- Release skill (`.claude/skills/release/SKILL.md`) updated to match the `rusty-tmpl` template:
+  added the toolchain-update step and the post-tag workflow watch/verify step. README's "Releasing"
+  section updated to match.
+
 ## [0.2.3] - 2026-09-16
 
 ### Changed
