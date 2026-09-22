@@ -6,7 +6,7 @@ members = [
 ]
 
 [workspace.package]
-version = "0.2.4"
+version = "0.3.0"
 edition = "2024"
 authors = ["Kristofer Liljeblad <kristofer@mklab.se>"]
 license = "MIT"
@@ -15,7 +15,7 @@ rust-version = "1.88"
 
 [workspace.dependencies]
 # Internal crates
-deemer-core = { version = "0.2.4", path = "crates/deemer-core" }
+deemer-core = { version = "0.3.0", path = "crates/deemer-core" }
 
 # CLI
 clap = { version = "4.6", features = ["derive", "env", "wrap_help"] }
