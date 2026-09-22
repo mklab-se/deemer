@@ -67,8 +67,11 @@ shared global config (`~/.config/ailloy/config.yaml`). To call a model from a co
 
 - Edition 2024, MSRV 1.88 (`[workspace.package]`; set by Ailloy 2.x).
 - All deps are declared in the root `[workspace.dependencies]` and inherited with `.workspace = true`.
-  `reqwest` stays on 0.12 (shares Ailloy's TLS stack; 0.13 needs cmake/NASM on Windows) and
-  `serde_yaml` on 0.9.
+  `serde_yaml` stays on 0.9 (see the `# Stays on ...` comment in `Cargo.toml`).
+- Building from source on Windows needs NASM and CMake on `PATH` — `aws-lc-rs` (reqwest's TLS crypto
+  backend) compiles optimized assembly routines at build time. macOS and Linux need nothing extra.
+  The release workflow's Windows leg installs NASM via `ilammy/setup-nasm@v1`; CMake and MSVC are
+  already on the `windows-latest` image.
 - CI gates: `cargo fmt --all -- --check`, `cargo clippy --workspace --all-targets -- -D warnings`,
   `cargo test --workspace`. CI runs the latest stable toolchain, so run the gates on an up-to-date
   local toolchain (new clippy lints otherwise surface only in CI).
@@ -76,3 +79,14 @@ shared global config (`~/.config/ailloy/config.yaml`). To call a model from a co
   skill updates the toolchain and dependencies first, then watches the workflow. `release.yml` builds
   binaries with `cargo auditable` and attaches a per-target CycloneDX SBOM (`.cdx.json`) to the
   GitHub Release alongside the archives.
+
+## Dependency Policy
+
+We keep this tool's dependencies at their latest compatible versions, not just the versions that
+happen to still compile. Staying current is the default, not something we get to eventually —
+letting dependencies drift is how technical debt accumulates unnoticed until a security advisory or
+a forced breaking upgrade makes it urgent. When a newer major is available and there's no concrete,
+documented reason not to take it (see any `# Stays on ...` comments in `Cargo.toml` for the current
+exceptions and why), take it during the next maintenance round rather than deferring it. The
+cross-repo `maintaining-rust-tools` skill drives this for the whole fleet (ailloy + cosq + deemer +
+mdeck + pidge + rigg + rusty-tmpl).

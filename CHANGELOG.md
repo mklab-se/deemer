@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Changed
+
+- `reqwest` upgraded 0.12 → 0.13: the `rustls-tls-native-roots` feature is renamed `rustls`, and
+  moves to `rustls-platform-verifier` (validates against the live OS trust store instead of a
+  bundled CA list) with `aws-lc-rs` as the crypto provider (was `ring`). No API or behavior change
+  for deemer's own surface.
+- Ailloy 2.1 → 2.2 in lockstep, so both crates share the same reqwest/TLS stack instead of pulling
+  `aws-lc-rs` and `ring` side by side.
+- Building from source on Windows now needs [NASM](https://www.nasm.us/) and
+  [CMake](https://cmake.org/) on `PATH` to compile `aws-lc-rs`'s optimized assembly routines; macOS
+  and Linux need nothing extra. `cargo binstall` and Homebrew are unaffected (pre-built binaries).
+  The release workflow's Windows build installs NASM via `ilammy/setup-nasm@v1`.
+
 ## [0.2.4] - 2026-09-22
 
 ### Changed
