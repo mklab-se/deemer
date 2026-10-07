@@ -5,6 +5,26 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Changed
+
+- Ailloy 2.2 -> 3.0 (breaking major upstream: adds the `eval` capability, the `typesafe`
+  provider, and makes `Capability`/`ProviderKind`/`Task` `#[non_exhaustive]`). No code change was
+  needed: deemer only requests `chat` (`deemer ai config` and `deemer ai status` still list just
+  `chat`, so `eval` is not shown), and test judging goes through `Client::from_config`, which
+  routes to the default chat node.
+- Shared Ailloy config: once any tool built on Ailloy 3.0 (including this release) writes a
+  `typesafe` node, the `eval` capability or a `defaults.eval` entry to
+  `~/.config/ailloy/config.yaml`, tools still on Ailloy 2.x can no longer read that file. Upgrade
+  every MKLab tool together.
+- `cargo update`: tokio 1.53.2, thiserror 2.0.21, rustls-platform-verifier 0.7.1, uuid 1.27.0,
+  and other compatible bumps. All other direct dependencies were already on their latest release.
+- MSRV stays at 1.88: no direct dependency requires more (Ailloy 3.0 still declares 1.88).
+- CI: the release workflow already matched the `rusty-tmpl` template (auditable binaries, one
+  CycloneDX SBOM per target, current action majors), so no workflow change was needed.
+- README: added a "What's new" link to the changelog under the badges.
+
 ## [0.3.0] - 2026-09-22
 
 ### Changed

@@ -57,7 +57,7 @@ chrono = { version = "0.4", default-features = false, features = ["clock", "serd
 dirs = "7.0"
 
 # AI
-ailloy = { version = "2.2", default-features = false, features = ["config-tui"] }
+ailloy = { version = "3.0", default-features = false, features = ["config-tui"] }
 
 # Test-suite domain logic
 cel-interpreter = "0.10"
