@@ -623,7 +623,7 @@ dependencies = [
 
 [[package]]
 name = "deemer"
-version = "0.3.0"
+version = "0.4.0"
 dependencies = [
  "ailloy",
  "anyhow",
@@ -644,7 +644,7 @@ dependencies = [
 
 [[package]]
 name = "deemer-core"
-version = "0.3.0"
+version = "0.4.0"
 dependencies = [
  "cel-interpreter",
  "chrono",
