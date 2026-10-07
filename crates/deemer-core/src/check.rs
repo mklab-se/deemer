@@ -171,7 +171,7 @@ mod tests {
     use super::*;
 
     fn parse(y: &str) -> Suite {
-        serde_yaml::from_str(y).unwrap()
+        serde_norway::from_str(y).unwrap()
     }
 
     #[test]
@@ -214,7 +214,7 @@ mod tests {
             include_str!("../../../docs/samples/support-tone.suite.yml"),
             include_str!("../../../docs/samples/annotated.suite.yml"),
         ] {
-            let s: Suite = serde_yaml::from_str(yaml).unwrap();
+            let s: Suite = serde_norway::from_str(yaml).unwrap();
             let issues = check(&s);
             assert!(issues.is_empty(), "expected no issues, got: {issues:?}");
         }

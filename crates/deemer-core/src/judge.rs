@@ -134,7 +134,7 @@ mod tests {
     use super::*;
 
     fn parse_outputs(s: &str) -> Outputs {
-        serde_yaml::from_str(s).unwrap()
+        serde_norway::from_str(s).unwrap()
     }
 
     #[test]

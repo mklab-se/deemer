@@ -41,8 +41,8 @@ pub enum Error {
     AiParse(String),
 }
 
-impl From<serde_yaml::Error> for Error {
-    fn from(e: serde_yaml::Error) -> Self {
+impl From<serde_norway::Error> for Error {
+    fn from(e: serde_norway::Error) -> Self {
         Error::Config(e.to_string())
     }
 }

@@ -128,7 +128,7 @@ pub struct Execution {
 impl RunResults {
     /// Serialize the log to YAML.
     pub fn to_yaml(&self) -> crate::Result<String> {
-        Ok(serde_yaml::to_string(self)?)
+        Ok(serde_norway::to_string(self)?)
     }
 }
 
@@ -353,7 +353,7 @@ mod tests {
         assert!(yaml.contains("status: failed"));
         assert!(yaml.contains("test_number: 1"));
         assert!(yaml.contains("substituted:"));
-        let back: RunResults = serde_yaml::from_str(&yaml).unwrap();
+        let back: RunResults = serde_norway::from_str(&yaml).unwrap();
         assert_eq!(back.summary.total, 2);
         assert_eq!(back.tests.len(), 2);
     }
@@ -406,7 +406,7 @@ mod tests {
             std::fs::write(golden, &yaml).unwrap();
         }
         assert_eq!(yaml, std::fs::read_to_string(golden).unwrap());
-        let back: RunResults = serde_yaml::from_str(&yaml).unwrap();
+        let back: RunResults = serde_norway::from_str(&yaml).unwrap();
         assert_eq!(back.to_yaml().unwrap(), yaml);
     }
 
@@ -418,14 +418,14 @@ mod tests {
     }
 
     fn suite_no_templates() -> Suite {
-        serde_yaml::from_str(
+        serde_norway::from_str(
             "test_suite_format: 1\nname: Demo\ndescription: d\ntest:\n  command: \"tool {arg}\"\n  evaluate:\n    assert: {expression: \"{exit_code} == 0\"}\nsuite:\n  assert: {expression: \"{failed} == 0\"}\ndata: [{arg: 1}]",
         )
         .unwrap()
     }
 
     fn suite_custom_templates() -> Suite {
-        serde_yaml::from_str(
+        serde_norway::from_str(
             "test_suite_format: 1\nname: Demo\ndescription: d\ntest:\n  command: \"tool {arg}\"\n  evaluate:\n    assert: {expression: \"{exit_code} == 0\"}\nsuite:\n  assert: {expression: \"{failed} == 0\"}\nreport:\n  template: \"# {name}\\n## Executive Summary\\n{executive_summary}\\n## Tests\\n{all_test_results}\"\ndata: [{arg: 1}]",
         )
         .unwrap()
@@ -464,7 +464,7 @@ mod tests {
             include_str!("../../../docs/samples/cli-smoke.results.yml"),
             include_str!("../../../docs/samples/support-tone.results.yml"),
         ] {
-            let r: RunResults = serde_yaml::from_str(yaml).unwrap();
+            let r: RunResults = serde_norway::from_str(yaml).unwrap();
             assert_eq!(r.results_format, 1);
             assert_eq!(r.summary.total, r.tests.len());
         }

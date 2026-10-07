@@ -33,7 +33,7 @@ impl Config {
             return Ok(Self::default());
         }
         let yaml = std::fs::read_to_string(&path)?;
-        Ok(serde_yaml::from_str(&yaml)?)
+        Ok(serde_norway::from_str(&yaml)?)
     }
 
     /// Save the config to disk, creating the parent directory if needed.
@@ -42,7 +42,7 @@ impl Config {
         if let Some(parent) = path.parent() {
             std::fs::create_dir_all(parent)?;
         }
-        let yaml = serde_yaml::to_string(self)?;
+        let yaml = serde_norway::to_string(self)?;
         std::fs::write(&path, yaml)?;
         Ok(())
     }
@@ -57,8 +57,8 @@ mod tests {
         let cfg = Config {
             example: Some("hello".to_string()),
         };
-        let yaml = serde_yaml::to_string(&cfg).unwrap();
-        let parsed: Config = serde_yaml::from_str(&yaml).unwrap();
+        let yaml = serde_norway::to_string(&cfg).unwrap();
+        let parsed: Config = serde_norway::from_str(&yaml).unwrap();
         assert_eq!(parsed.example.as_deref(), Some("hello"));
     }
 
@@ -68,18 +68,18 @@ mod tests {
             example: Some("hello: world".to_string()),
         };
         assert_eq!(
-            serde_yaml::to_string(&some).unwrap(),
+            serde_norway::to_string(&some).unwrap(),
             "example: 'hello: world'\n"
         );
         assert_eq!(
-            serde_yaml::to_string(&Config::default()).unwrap(),
+            serde_norway::to_string(&Config::default()).unwrap(),
             "example: null\n"
         );
     }
 
     #[test]
     fn empty_yaml_uses_defaults() {
-        let parsed: Config = serde_yaml::from_str("{}").unwrap();
+        let parsed: Config = serde_norway::from_str("{}").unwrap();
         assert!(parsed.example.is_none());
     }
 }

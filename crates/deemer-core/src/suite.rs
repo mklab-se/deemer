@@ -158,7 +158,7 @@ impl Suite {
     /// Load and parse a suite from a YAML file.
     pub fn load(path: &Path) -> crate::Result<Suite> {
         let yaml = std::fs::read_to_string(path)?;
-        let suite = serde_yaml::from_str(&yaml)?;
+        let suite = serde_norway::from_str(&yaml)?;
         Ok(suite)
     }
 }
@@ -198,7 +198,7 @@ mod tests {
     #[test]
     fn parses_safety_sample() {
         let yaml = include_str!("../../../docs/samples/safety-checks.suite.yml");
-        let s: Suite = serde_yaml::from_str(yaml).unwrap();
+        let s: Suite = serde_norway::from_str(yaml).unwrap();
         assert_eq!(s.test_suite_format, 1);
         assert_eq!(s.data.len(), 4);
         assert!(s.test.evaluate.ai.is_some());
@@ -217,16 +217,16 @@ mod tests {
             include_str!("../../../docs/samples/support-tone.suite.yml"),
             include_str!("../../../docs/samples/annotated.suite.yml"),
         ] {
-            let s: Suite = serde_yaml::from_str(yaml).unwrap();
+            let s: Suite = serde_norway::from_str(yaml).unwrap();
             assert!(!s.data.is_empty());
         }
     }
 
     #[test]
     fn output_spec_terse_and_rich() {
-        let terse: OutputSpec = serde_yaml::from_str("boolean").unwrap();
+        let terse: OutputSpec = serde_norway::from_str("boolean").unwrap();
         assert!(matches!(terse, OutputSpec::Terse(t) if t == "boolean"));
-        let rich: OutputSpec = serde_yaml::from_str("{type: string, values: [a, b]}").unwrap();
+        let rich: OutputSpec = serde_norway::from_str("{type: string, values: [a, b]}").unwrap();
         assert!(matches!(rich, OutputSpec::Rich { .. }));
         assert_eq!(rich.type_name(), "string");
         assert_eq!(rich.values().unwrap().len(), 2);
@@ -254,6 +254,6 @@ mod tests {
     #[test]
     fn missing_assert_is_error() {
         let bad = "test_suite_format: 1\nname: x\ndescription: y\ntest:\n  command: t\n  evaluate: {}\nsuite:\n  assert: {expression: 'true'}\ndata: [{}]";
-        assert!(serde_yaml::from_str::<Suite>(bad).is_err());
+        assert!(serde_norway::from_str::<Suite>(bad).is_err());
     }
 }

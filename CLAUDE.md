@@ -67,7 +67,7 @@ shared global config (`~/.config/ailloy/config.yaml`). To call a model from a co
 
 - Edition 2024, MSRV 1.88 (`[workspace.package]`; set by Ailloy 3.x).
 - All deps are declared in the root `[workspace.dependencies]` and inherited with `.workspace = true`.
-  `serde_yaml` stays on 0.9 (see the `# Stays on ...` comment in `Cargo.toml`).
+  YAML is `serde_norway` (maintained drop-in fork of the deprecated `serde_yaml`; fleet-wide choice).
 - Building from source on Windows needs NASM and CMake on `PATH` — `aws-lc-rs` (reqwest's TLS crypto
   backend) compiles optimized assembly routines at build time. macOS and Linux need nothing extra.
   The release workflow's Windows leg installs NASM via `ilammy/setup-nasm@v1`; CMake and MSVC are
