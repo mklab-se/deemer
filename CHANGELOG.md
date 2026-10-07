@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.1] - 2026-10-07
+
+### Changed
+
+- YAML library: `serde_yaml` 0.9 (deprecated upstream) replaced by `serde_norway` 0.9.42, its
+  maintained drop-in fork, chosen fleet-wide. No format change and no migration: results logs and
+  the config file are written byte-for-byte as before (a new golden test pins the exact output).
+- Ailloy 3.0.1, which also moves to `serde_norway`, so only one YAML stack is built.
+- Docs, code comments, CLI help and error messages no longer contain em-dashes. Report and console
+  output are unchanged.
+- CI: a new `No em-dashes` step in the check job fails the build if U+2014 appears anywhere in the
+  repository. All workflows already run on `ubuntu-latest`.
+
 ## [0.4.0] - 2026-10-07
 
 ### Changed
