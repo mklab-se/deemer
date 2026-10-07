@@ -8,6 +8,11 @@
 <a href="https://github.com/mklab-se/deemer/blob/main/LICENSE"><img src="https://img.shields.io/crates/l/deemer.svg" alt="License"></a>
 </p>
 
+<p align="center">
+  <strong>deemer 0.4</strong> is here: built on Ailloy 3.0, ready for configs that use the new eval capability and TypeSafe provider.<br>
+  <a href="CHANGELOG.md"><strong>What's new</strong></a>
+</p>
+
 # deemer
 
 **Integration tests, judged by AI.** Deemer runs a command against a list of inputs and decides whether
