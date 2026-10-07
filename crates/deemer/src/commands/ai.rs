@@ -1,10 +1,10 @@
 //! AI feature management, backed by the shared [Ailloy](https://crates.io/crates/ailloy) config.
 //!
-//! - `deemer ai`         — show status
-//! - `deemer ai test`    — test the AI connection
-//! - `deemer ai enable`  — enable AI for deemer
-//! - `deemer ai disable` — disable AI for deemer
-//! - `deemer ai config`  — interactive AI node configuration
+//! - `deemer ai`: show status
+//! - `deemer ai test`: test the AI connection
+//! - `deemer ai enable`: enable AI for deemer
+//! - `deemer ai disable`: disable AI for deemer
+//! - `deemer ai config`: interactive AI node configuration
 //!
 //! Ailloy stores a shared, global config (`~/.config/ailloy/config.yaml`) so
 //! every MKLab tool reuses the same providers and API keys. To actually call a

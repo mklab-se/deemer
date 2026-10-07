@@ -16,7 +16,7 @@
 # deemer
 
 **Integration tests, judged by AI.** Deemer runs a command against a list of inputs and decides whether
-each run — and the suite as a whole — passed. When a plain `assertEquals` can't capture "did this
+each run (and the suite as a whole) passed. When a plain `assertEquals` can't capture "did this
 *actually* work?", you let a model judge it, and you still get a deterministic pass/fail and a complete
 audit trail.
 
@@ -26,7 +26,7 @@ audit trail.
 
 Some things are easy to assert: an exit code, an exact string, a JSON field. Many things aren't:
 
-- Did the chatbot **refuse** the unsafe request — or just crash?
+- Did the chatbot **refuse** the unsafe request, or just crash?
 - Is the support reply **empathetic and on-topic**, with no invented promises?
 - Did the summariser **keep the meaning** while cutting the length?
 - Is the generated README **actually helpful** to a newcomer?
@@ -39,7 +39,7 @@ your CI can gate on.
 ## How it works
 
 A **test suite** is one YAML file. Deemer runs your `command` once per data row, optionally asks an AI
-to evaluate the output, and an `assert` decides pass/fail — for each test and for the suite.
+to evaluate the output, and an `assert` decides pass/fail for each test and for the suite.
 
 ```yaml
 test_suite_format: 1
@@ -67,12 +67,12 @@ suite:
 
 data:
   - stdin: "My order is 3 days late and still not here. This is ridiculous."
-  - stdin: "I was charged twice this month — please fix it."
+  - stdin: "I was charged twice this month. Please fix it."
   - stdin: "Any plans for a dark mode?"
 ```
 
 Run it, and Deemer writes two artifacts: a **results log** (a complete, structured YAML record of every
-run — the command, the output, the AI's full prompt and parsed verdict, and the assert) and a
+run: the command, the output, the AI's full prompt and parsed verdict, and the assert) and a
 human-readable **report** rendered from it. The log is the source of truth; the report is a view.
 
 ## Why Deemer
@@ -81,7 +81,7 @@ human-readable **report** rendered from it. The log is the source of truth; the 
   plain `exit_code == 0` checks. No AI? It runs as a fast, ordinary test runner.
 - **You write criteria, not JSON wrangling.** Declare the values you want back; Deemer generates the
   response format, parses it, and exposes each as a variable your `assert` can use.
-- **One simple syntax.** `{placeholders}` everywhere — in commands, prompts, asserts, and reports.
+- **One simple syntax.** `{placeholders}` everywhere: in commands, prompts, asserts, and reports.
 - **A real audit trail.** Every AI call's *complete* assembled prompt and reply is stored, so a verdict
   is never a black box. Re-render different reports from one run without re-executing.
 - **CI-ready.** A single `status: passed|failed|errored` to gate on, plus concurrency and rate-limit
@@ -92,10 +92,10 @@ human-readable **report** rendered from it. The log is the source of truth; the 
 ## Status
 
 > **v1 runner landed; early but usable.** `deemer run <suite.yml>` and `deemer check <suite.yml>` are
-> implemented — deterministic *and* AI-judged suites run, producing a results log and a report, with a
+> implemented: deterministic *and* AI-judged suites run, producing a results log and a report, with a
 > `0`/`1`/`2` exit code for CI. AI evaluation uses your configured [Ailloy](https://crates.io/crates/ailloy)
 > model. Rough edges remain (e.g. `working_dir`/`env` suite fields and per-test model overrides are not
-> yet wired — use the shell command inline for now). The suite format may still change before 1.0.
+> yet wired; use the shell command inline for now). The suite format may still change before 1.0.
 
 ## Getting started
 
@@ -105,12 +105,12 @@ Install (see [INSTALL.md](INSTALL.md) for Homebrew, `cargo install`, `cargo bins
 cargo install deemer
 ```
 
-Then explore the format — these are the best starting points today:
+Then explore the format. These are the best starting points today:
 
-- **[`docs/samples/annotated.suite.yml`](docs/samples/annotated.suite.yml)** — a fully-commented suite touring every feature.
-- **[`docs/samples/`](docs/samples/)** — three focused examples, each paired with the results log it produces.
-- **[`docs/test-suite-config.md`](docs/test-suite-config.md)** — the suite format reference.
-- **[`docs/test-results.md`](docs/test-results.md)** — the results-log reference.
+- **[`docs/samples/annotated.suite.yml`](docs/samples/annotated.suite.yml)**: a fully-commented suite touring every feature.
+- **[`docs/samples/`](docs/samples/)**: three focused examples, each paired with the results log it produces.
+- **[`docs/test-suite-config.md`](docs/test-suite-config.md)**: the suite format reference.
+- **[`docs/test-results.md`](docs/test-results.md)**: the results-log reference.
 
 Configure AI once (shared across all MKLab tools via [Ailloy](https://crates.io/crates/ailloy)):
 
@@ -151,7 +151,7 @@ the tag triggers [`release.yml`](.github/workflows/release.yml), which:
 
 Two secrets enable publishing (configured once on the repo): `CARGO_REGISTRY_TOKEN` (in the
 `crates-io` environment) and `HOMEBREW_TAP_TOKEN` (a repo secret). If the Homebrew token is missing the
-release still succeeds — that step just logs a warning.
+release still succeeds; that step just logs a warning.
 
 ## License
 

@@ -2,7 +2,7 @@
 //!
 //! A minimal, reusable starting point: a YAML config stored in the platform
 //! config directory (`~/.config/deemer/config.yaml` on Linux/macOS). No
-//! command uses it yet — it's here so a new tool has somewhere obvious to grow
+//! command uses it yet; it's here so a new tool has somewhere obvious to grow
 //! its settings. Add fields to [`Config`] and they round-trip automatically.
 
 use std::path::PathBuf;

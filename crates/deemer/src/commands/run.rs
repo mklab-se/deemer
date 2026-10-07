@@ -1,4 +1,4 @@
-//! `deemer run` — execute a suite, judge each run, and write the log + report.
+//! `deemer run`: execute a suite, judge each run, and write the log + report.
 //!
 //! The pure logic lives in `deemer-core`; this module is the async orchestration:
 //! it spawns the command per data row (with timeout, concurrency, and rate-limit
@@ -56,7 +56,7 @@ pub async fn run(
             .is_some();
     if ai_used && !crate::commands::ai::is_ai_active() {
         return Err(anyhow!(
-            "this suite uses AI evaluation, but AI is not active — run `deemer ai config` then `deemer ai enable`"
+            "this suite uses AI evaluation, but AI is not active; run `deemer ai config` then `deemer ai enable`"
         ));
     }
 
@@ -238,7 +238,10 @@ pub async fn run(
     write_artifact(&results_path, &results.to_yaml()?)?;
     write_artifact(&report_path, &report_md)?;
 
-    println!("{passed}/{total} passed — status: {}", status_str(status));
+    println!(
+        "{passed}/{total} passed \u{2014} status: {}",
+        status_str(status)
+    );
     println!("results: {}", results_path.display());
     println!("report:  {}", report_path.display());
     if let Some(e) = &suite_error {

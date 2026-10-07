@@ -1,4 +1,4 @@
-# Results log for cli-smoke.suite.yml (v2 format) — no AI at all, all passed.
+# Results log for cli-smoke.suite.yml (v2 format): no AI at all, all passed.
 # Deterministic: each test's verdict is purely its assert result (D14). Tests are
 # listed in data-entry order (D17). Note `substituted` elides large stdout (D18).
 results_format: 1
@@ -35,7 +35,7 @@ summary:
     expression: '{failed} == 0 && {errored} == 0'
     substituted: '0 == 0 && 0 == 0'
     result: true
-  # No `ai:` here — the suite verdict is purely deterministic.
+  # No `ai:` here; the suite verdict is purely deterministic.
 
 tests:
   - test_number: 1

@@ -1,7 +1,7 @@
 //! AI evaluation: assembling the prompt and parsing the model's reply.
 //!
 //! The author's `prompt` is a template that already places `{stdout}`, `{stdin}`,
-//! `{suite_context}` etc. wherever they want them — the caller renders it first.
+//! `{suite_context}` etc. wherever they want them; the caller renders it first.
 //! This module appends the *response instruction* (generated from the declared
 //! `expected_outputs`) so the author never writes "respond as JSON", and parses
 //! the model's reply back into typed variables.
@@ -29,7 +29,7 @@ pub fn default_outputs() -> Outputs {
 }
 
 /// Render the "respond with ONLY this JSON object" instruction from the declared
-/// outputs — naming each field, its type, any enum values, list element type, and
+/// outputs: naming each field, its type, any enum values, list element type, and
 /// description.
 pub fn response_instruction(outputs: &Outputs) -> String {
     let mut lines = Vec::new();
@@ -56,7 +56,7 @@ pub fn response_instruction(outputs: &Outputs) -> String {
             ..
         } = spec
         {
-            desc = format!("{desc} — {d}");
+            desc = format!("{desc} \u{2014} {d}");
         }
         lines.push(format!("  \"{name}\": {desc}"));
     }

@@ -9,7 +9,7 @@ use std::path::PathBuf;
 #[command(name = "deemer")]
 #[command(author, version, about)]
 #[command(
-    long_about = "deemer runs AI-assisted integration tests — when deciding whether a \
+    long_about = "deemer runs AI-assisted integration tests, for when deciding whether a \
     test or test suite worked needs AI judgement rather than a plain assertion.\n\n\
     Run a suite with `deemer run <suite.yml>`, or validate one with `deemer check \
     <suite.yml>`. See the docs and samples for the suite format."

@@ -1,7 +1,7 @@
 //! The universal variable value (`serde_json::Value`) and conversions used by
 //! templating, expression evaluation, and AI reply parsing.
 //!
-//! Every variable Deemer exposes — captured output, data fields, AI outputs —
+//! Every variable Deemer exposes (captured output, data fields, AI outputs)
 //! is a [`serde_json::Value`]. This module bridges those values to the CEL
 //! interpreter (for asserts) and renders them as display literals (for logs).
 
@@ -29,7 +29,7 @@ const MAX_LITERAL: usize = 60;
 /// Render a value as a typed literal for the `substituted` field of the results log.
 ///
 /// Strings are quoted (and elided with `…` when long); numbers, booleans, null and
-/// arrays render bare. This is for display only — it is never parsed or evaluated.
+/// arrays render bare. This is for display only; it is never parsed or evaluated.
 pub fn value_to_literal(v: &Value) -> String {
     match v {
         Value::String(s) if s.chars().count() > MAX_LITERAL => {

@@ -1,8 +1,8 @@
 //! Static validation of a suite (`deemer check`).
 //!
-//! Catches the mistakes the format docs warn about — reserved-name collisions,
+//! Catches the mistakes the format docs warn about (reserved-name collisions,
 //! malformed rate limits, asserts/templates referencing an unknown variable, and
-//! two suites resolving to the same output path — before anything runs.
+//! two suites resolving to the same output path) before anything runs.
 
 use crate::suite::{AiSpec, RateLimit, Suite};
 use regex::Regex;
@@ -10,7 +10,7 @@ use std::collections::HashSet;
 
 /// Names Deemer provides (captured output, deemer-injected report/suite vars).
 /// `stdin` is included so it's a *known* variable, but it is explicitly allowed
-/// as a data-field name (the documented way to feed stdin — see D4).
+/// as a data-field name (the documented way to feed stdin; see D4).
 const RESERVED: &[&str] = &[
     "stdout",
     "stderr",

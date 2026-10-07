@@ -1,4 +1,4 @@
-//! deemer — run AI-assisted integration tests that judge whether your tests passed.
+//! deemer: run AI-assisted integration tests that judge whether your tests passed.
 
 use anyhow::Result;
 use clap::{CommandFactory, Parser};

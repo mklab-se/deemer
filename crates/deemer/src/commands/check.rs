@@ -1,4 +1,4 @@
-//! `deemer check` — validate a suite without running it.
+//! `deemer check`: validate a suite without running it.
 
 use anyhow::Result;
 use colored::Colorize;

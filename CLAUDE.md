@@ -4,7 +4,7 @@ Guidance for Claude Code (and other agents) working in this repository.
 
 ## What this is
 
-`deemer` is a CLI for running **AI-assisted integration tests** — for cases where deciding whether a
+`deemer` is a CLI for running **AI-assisted integration tests**, for cases where deciding whether a
 test or a whole test suite actually "worked" needs AI judgement rather than a plain assertion. The
 domain logic (suite model, CEL asserts, AI judgement, results logs, reports) lives in `deemer-core`
 and is driven by `deemer run` / `deemer check`, on top of the shared MKLab CLI scaffold described below.
@@ -20,9 +20,9 @@ and is driven by `deemer run` / `deemer check`, on top of the shared MKLab CLI s
 That template carries the shared MKLab CLI conventions (workspace layout, clap CLI, Ailloy `ai`
 command, update checker, CI/release pipeline, `/release` skill). Use the lineage in both directions:
 
-- **Pulling improvements in** — when the template gains a fix or new convention, compare against
+- **Pulling improvements in**: when the template gains a fix or new convention, compare against
   `../rusty-tmpl/` and port the relevant change here, adapting the `rusty-tmpl` name to `deemer`.
-- **Pushing improvements back** — if you discover a fix or better pattern here that is *generic*
+- **Pushing improvements back**: if you discover a fix or better pattern here that is *generic*
   (not specific to deemer's domain), consider contributing it upstream to `mklab-se/rusty-tmpl`
   so every future tool benefits. Generalize it (strip deemer-specific names/logic) before doing so.
 
@@ -33,27 +33,27 @@ back to the GitHub URL if the sibling directory isn't present.
 
 A two-crate Cargo workspace:
 
-- `crates/deemer/` — the CLI binary.
-  - `main.rs` — `#[tokio::main]`; sets up logging, dynamic-completion env, the `--no-color` override,
+- `crates/deemer/`: the CLI binary.
+  - `main.rs`: `#[tokio::main]`; sets up logging, dynamic-completion env, the `--no-color` override,
     and spawns the background update check, then calls `Cli::run`.
-  - `cli.rs` — clap-derive `Cli`, `Commands`, `AiCommands`, `Shell`; `Cli::run` dispatches. The
+  - `cli.rs`: clap-derive `Cli`, `Commands`, `AiCommands`, `Shell`; `Cli::run` dispatches. The
     no-subcommand (`None`) arm prints the banner and usage.
-  - `commands/` — one module per command (`ai`, `completion`, `run`, `check`). Add new commands here.
-  - `banner.rs` — ASCII block-letter banner + version line.
-  - `update.rs` — polls crates.io, caches the result for 24h, notifies on a newer version.
-- `crates/deemer-core/` — framework-agnostic library (no clap/tokio). deemer's domain logic lives here.
-  - `suite.rs` — the v2 test-suite model (YAML), `check.rs` — static validation (`deemer check`).
-  - `expr.rs` / `value.rs` — CEL `assert` evaluation and the value model, `template.rs` — templating
+  - `commands/`: one module per command (`ai`, `completion`, `run`, `check`). Add new commands here.
+  - `banner.rs`: ASCII block-letter banner + version line.
+  - `update.rs`: polls crates.io, caches the result for 24h, notifies on a newer version.
+- `crates/deemer-core/`: framework-agnostic library (no clap/tokio). deemer's domain logic lives here.
+  - `suite.rs`: the v2 test-suite model (YAML), `check.rs`: static validation (`deemer check`).
+  - `expr.rs` / `value.rs`: CEL `assert` evaluation and the value model, `template.rs`: templating
     and log substitution.
-  - `judge.rs` — AI prompt assembly and reply parsing/validation, `results.rs` — results log,
+  - `judge.rs`: AI prompt assembly and reply parsing/validation, `results.rs`: results log,
     `config_sha256`, and report rendering.
-  - `config.rs` — YAML `Config` in `~/.config/deemer/`, a reusable starting point (not yet wired
+  - `config.rs`: YAML `Config` in `~/.config/deemer/`, a reusable starting point (not yet wired
     into the CLI).
-  - `error.rs` — `thiserror` `Error` enum + `Result` alias.
+  - `error.rs`: `thiserror` `Error` enum + `Result` alias.
 
 ## Adding a command
 
-1. Add a variant to `Commands` in `cli.rs` (with a doc comment — it becomes the help text).
+1. Add a variant to `Commands` in `cli.rs` (with a doc comment; it becomes the help text).
 2. Add a `pub mod <name>;` in `commands/mod.rs` and implement `pub async fn run(...) -> anyhow::Result<()>`.
 3. Add the dispatch arm in `Cli::run`.
 
@@ -68,7 +68,7 @@ shared global config (`~/.config/ailloy/config.yaml`). To call a model from a co
 - Edition 2024, MSRV 1.88 (`[workspace.package]`; set by Ailloy 3.x).
 - All deps are declared in the root `[workspace.dependencies]` and inherited with `.workspace = true`.
   YAML is `serde_norway` (maintained drop-in fork of the deprecated `serde_yaml`; fleet-wide choice).
-- Building from source on Windows needs NASM and CMake on `PATH` — `aws-lc-rs` (reqwest's TLS crypto
+- Building from source on Windows needs NASM and CMake on `PATH`: `aws-lc-rs` (reqwest's TLS crypto
   backend) compiles optimized assembly routines at build time. macOS and Linux need nothing extra.
   The release workflow's Windows leg installs NASM via `ilammy/setup-nasm@v1`; CMake and MSVC are
   already on the `windows-latest` image.
@@ -80,10 +80,17 @@ shared global config (`~/.config/ailloy/config.yaml`). To call a model from a co
   binaries with `cargo auditable` and attaches a per-target CycloneDX SBOM (`.cdx.json`) to the
   GitHub Release alongside the archives.
 
+## Writing style
+
+- No em-dashes (U+2014) anywhere: docs, comments, help text, error messages, test strings and commit
+  messages. Use a comma; otherwise a colon, parentheses or a new sentence. Rust code that must emit the
+  character at runtime writes the escape `\u{2014}`, never the literal. CI enforces this (`No em-dashes`
+  step in `ci.yml`).
+
 ## Dependency Policy
 
 We keep this tool's dependencies at their latest compatible versions, not just the versions that
-happen to still compile. Staying current is the default, not something we get to eventually —
+happen to still compile. Staying current is the default, not something we get to eventually:
 letting dependencies drift is how technical debt accumulates unnoticed until a security advisory or
 a forced breaking upgrade makes it urgent. When a newer major is available and there's no concrete,
 documented reason not to take it (see any `# Stays on ...` comments in `Cargo.toml` for the current
