@@ -63,6 +63,21 @@ mod tests {
     }
 
     #[test]
+    fn config_yaml_is_byte_stable() {
+        let some = Config {
+            example: Some("hello: world".to_string()),
+        };
+        assert_eq!(
+            serde_yaml::to_string(&some).unwrap(),
+            "example: 'hello: world'\n"
+        );
+        assert_eq!(
+            serde_yaml::to_string(&Config::default()).unwrap(),
+            "example: null\n"
+        );
+    }
+
+    #[test]
     fn empty_yaml_uses_defaults() {
         let parsed: Config = serde_yaml::from_str("{}").unwrap();
         assert!(parsed.example.is_none());

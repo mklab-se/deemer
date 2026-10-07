@@ -1,0 +1,109 @@
+results_format: 1
+suite:
+  name: Demo
+  description: d
+  config_path: demo.suite.yml
+  config_sha256: 2a97516c354b68848cdbd8f54a226a0a55b21ed138e207ad6c5cbb9c00aa5aea
+  report_path: reports/demo.md
+  results_path: results/demo.yaml
+run:
+  started_at: 2026-06-02T20:55:01Z
+  finished_at: 2026-06-02T20:55:02Z
+  duration_ms: 1000
+  deemer_version: 0.1.0
+  settings:
+    concurrency: 1
+    rate_limit: 10/s
+  ai:
+    used: true
+    model: gpt-x
+summary:
+  total: 2
+  passed: 1
+  failed: 1
+  errored: 0
+  pass_rate: 0.5
+  status: failed
+  assert:
+    expression: '{failed} == 0'
+    substituted: 1 == 0
+    result: false
+  ai:
+    model: gpt-x
+    prompt: ''
+    response: |-
+      multi
+      line
+    outputs: {}
+tests:
+- test_number: 1
+  status: passed
+  assert:
+    expression: '{exit_code} == 0'
+    substituted: 0 == 0
+    result: true
+  data:
+    yes: yes
+    no: No
+    num: '123'
+    float: '1.5'
+    'null': 'null'
+    tilde: '~'
+    empty: ''
+    space: ' lead'
+    colon: 'a: b'
+    dash: '- x'
+    unicode: åäö 😀
+    int: 7
+    f: 0.1
+    big: 1e21
+    none: null
+    list:
+    - 1
+    - two
+    - true
+    - null
+    obj:
+      k: []
+      m: {}
+  command: tool 1
+  stdin: |
+    line one
+    line two
+  execution:
+    started_at: 2026-06-02T20:55:01Z
+    exit_code: 0
+    duration_ms: 10
+    timed_out: false
+    stdout: "first: line\n  indented\n\ttab\n"
+    stderr: |
+      warning "quoted" 'single' # hash
+  ai:
+    model: gpt-x
+    prompt: |
+      Judge this:
+      {stdout}
+    response: '{"verdict": true}'
+    outputs:
+      verdict: true
+      score: 0.75
+      why: |
+        ok
+  error: 'boom: "x"'
+- test_number: 2
+  status: failed
+  assert:
+    expression: '{exit_code} == 0'
+    substituted: 1 == 0
+    result: false
+  data:
+    arg: 2
+  command: tool 2
+  execution:
+    started_at: 2026-06-02T20:55:01Z
+    exit_code: 1
+    duration_ms: 10
+    timed_out: false
+    stdout: out
+    stderr: ''
+  error: null

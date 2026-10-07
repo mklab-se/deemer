@@ -358,6 +358,58 @@ mod tests {
         assert_eq!(back.tests.len(), 2);
     }
 
+    /// A results log exercising the YAML scalar edge cases (multi-line text, strings that look
+    /// like numbers/booleans/null, quotes, colons, Unicode, nested AI outputs, floats, nulls).
+    fn rich_run_results() -> RunResults {
+        let mut r = sample_run_results();
+        r.run.settings.rate_limit = Some("10/s".to_string());
+        r.run.ai = AiInfo {
+            used: true,
+            model: Some("gpt-x".to_string()),
+        };
+        let t = &mut r.tests[0];
+        t.stdin = Some("line one\nline two\n".to_string());
+        t.execution.stdout = "first: line\n  indented\n\ttab\n".to_string();
+        t.execution.stderr = "warning \"quoted\" 'single' # hash\n".to_string();
+        t.data = serde_json::from_value(json!({
+            "yes": "yes", "no": "No", "num": "123", "float": "1.5", "null": "null",
+            "tilde": "~", "empty": "", "space": " lead", "colon": "a: b", "dash": "- x",
+            "unicode": "\u{e5}\u{e4}\u{f6} \u{1f600}", "int": 7, "f": 0.1, "big": 1e21,
+            "none": null, "list": [1, "two", true, null], "obj": {"k": [], "m": {}}
+        }))
+        .unwrap();
+        t.ai = Some(AiRecord {
+            model: "gpt-x".to_string(),
+            prompt: "Judge this:\n{stdout}\n".to_string(),
+            response: "{\"verdict\": true}".to_string(),
+            outputs: serde_json::from_value(json!({"verdict": true, "score": 0.75, "why": "ok\n"}))
+                .unwrap(),
+        });
+        t.error = Some("boom: \"x\"".to_string());
+        r.summary.ai = Some(AiRecord {
+            model: "gpt-x".to_string(),
+            prompt: String::new(),
+            response: "multi\nline".to_string(),
+            outputs: Map::new(),
+        });
+        r
+    }
+
+    /// Pins the exact bytes of a written results log, so a YAML library change cannot silently
+    /// alter the on-disk format. Regenerate deliberately with `DEEMER_BLESS=1 cargo test`.
+    #[test]
+    fn run_results_yaml_is_byte_stable() {
+        let golden = concat!(env!("CARGO_MANIFEST_DIR"), "/tests/golden/run_results.yaml");
+        let yaml = rich_run_results().to_yaml().unwrap();
+        if std::env::var_os("DEEMER_BLESS").is_some() {
+            std::fs::create_dir_all(std::path::Path::new(golden).parent().unwrap()).unwrap();
+            std::fs::write(golden, &yaml).unwrap();
+        }
+        assert_eq!(yaml, std::fs::read_to_string(golden).unwrap());
+        let back: RunResults = serde_yaml::from_str(&yaml).unwrap();
+        assert_eq!(back.to_yaml().unwrap(), yaml);
+    }
+
     #[test]
     fn config_sha256_is_stable_hex() {
         assert_eq!(config_sha256(b"demo"), config_sha256(b"demo"));
