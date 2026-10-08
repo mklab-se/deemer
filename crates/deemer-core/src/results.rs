@@ -207,7 +207,7 @@ fn default_fragment(t: &TestRecord) -> String {
         .execution
         .exit_code
         .map(|c| c.to_string())
-        .unwrap_or_else(|| "\u{2014}".to_string());
+        .unwrap_or_else(|| "n/a".to_string());
     let ai_line =
         t.ai.as_ref()
             .and_then(|ai| ai.outputs.get("reason"))
@@ -215,7 +215,7 @@ fn default_fragment(t: &TestRecord) -> String {
             .map(|r| format!(", AI: {r}"))
             .unwrap_or_default();
     format!(
-        "### Test {} \u{2014} {}\n- Command: `{}`\n- Exit {} ({} ms){}\n- `{}` → {}",
+        "### Test {}: {}\n- Command: `{}`\n- Exit {} ({} ms){}\n- `{}` → {}",
         t.test_number,
         status_str(t.status),
         t.command,
@@ -250,7 +250,7 @@ fn report_vars(suite: &Suite, summary: &Summary, all_test_results: &str) -> Map 
 /// The default whole-suite report.
 fn default_report(suite: &Suite, summary: &Summary, all_test_results: &str) -> String {
     let mut out = format!(
-        "# {}\n\n{}\n\n**{}/{} passed \u{2014} status: {}**\n\n",
+        "# {}\n\n{}\n\n**{}/{} passed, status: {}**\n\n",
         suite.name,
         suite.description,
         summary.passed,
@@ -437,8 +437,12 @@ mod tests {
         let suite = suite_no_templates();
         let md = render_report(&r, &suite);
         assert!(md.contains("# "));
-        assert!(md.contains("Test 1"));
-        assert!(md.contains("status"));
+        assert!(md.contains("### Test 1: "));
+        assert!(md.contains("passed, status: "));
+        assert!(
+            !md.contains('\u{2014}'),
+            "report must not contain an em-dash"
+        );
     }
 
     #[test]

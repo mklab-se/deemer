@@ -56,7 +56,7 @@ pub fn response_instruction(outputs: &Outputs) -> String {
             ..
         } = spec
         {
-            desc = format!("{desc} \u{2014} {d}");
+            desc = format!("{desc}: {d}");
         }
         lines.push(format!("  \"{name}\": {desc}"));
     }
