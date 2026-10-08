@@ -40,15 +40,21 @@ A two-crate Cargo workspace:
     no-subcommand (`None`) arm prints the banner and usage.
   - `commands/`: one module per command (`ai`, `completion`, `run`, `check`). Add new commands here.
   - `banner.rs`: ASCII block-letter banner + version line.
-  - `update.rs`: polls crates.io, caches the result for 24h, notifies on a newer version.
+  - `update.rs`: polls crates.io, caches the result for 24h in `paths::cache_dir()`, notifies on a
+    newer version.
 - `crates/deemer-core/`: framework-agnostic library (no clap/tokio). deemer's domain logic lives here.
   - `suite.rs`: the v2 test-suite model (YAML), `check.rs`: static validation (`deemer check`).
   - `expr.rs` / `value.rs`: CEL `assert` evaluation and the value model, `template.rs`: templating
     and log substitution.
   - `judge.rs`: AI prompt assembly and reply parsing/validation, `results.rs`: results log,
     `config_sha256`, and report rendering.
-  - `config.rs`: YAML `Config` in `~/.config/deemer/`, a reusable starting point (not yet wired
+  - `config.rs`: YAML `Config` in `paths::config_dir()`, a reusable starting point (not yet wired
     into the CLI).
+  - `paths.rs`: where the tool keeps files. Linux and macOS share the XDG layout, same as Ailloy:
+    `$XDG_CONFIG_HOME/deemer` or `~/.config/deemer`, `$XDG_CACHE_HOME/deemer` or
+    `~/.cache/deemer` (XDG variables only when absolute). Windows uses its native `%APPDATA%` /
+    `%LOCALAPPDATA%`. Never call `dirs::config_dir()`/`dirs::cache_dir()` directly (on macOS
+    those are `~/Library/...`).
   - `error.rs`: `thiserror` `Error` enum + `Result` alias.
 
 ## Adding a command

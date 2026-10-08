@@ -1,7 +1,8 @@
 //! Tool configuration.
 //!
-//! A minimal, reusable starting point: a YAML config stored in the platform
-//! config directory (`~/.config/deemer/config.yaml` on Linux/macOS). No
+//! A minimal, reusable starting point: a YAML config stored in the tool's
+//! config directory (`$XDG_CONFIG_HOME/deemer/config.yaml`, default
+//! `~/.config/deemer/config.yaml`, on Linux and macOS; see [`crate::paths`]). No
 //! command uses it yet; it's here so a new tool has somewhere obvious to grow
 //! its settings. Add fields to [`Config`] and they round-trip automatically.
 
@@ -22,8 +23,8 @@ pub struct Config {
 impl Config {
     /// Return the path to the config file, creating no files.
     pub fn config_path() -> Result<PathBuf> {
-        let dir = dirs::config_dir().ok_or(Error::NoConfigDir)?;
-        Ok(dir.join("deemer").join("config.yaml"))
+        let dir = crate::paths::config_dir().ok_or(Error::NoConfigDir)?;
+        Ok(dir.join("config.yaml"))
     }
 
     /// Load the config from disk. Returns [`Config::default`] if no file exists yet.
@@ -51,6 +52,17 @@ impl Config {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    #[cfg(not(windows))]
+    fn config_path_follows_the_xdg_layout() {
+        let path = Config::config_path().unwrap();
+        assert!(path.ends_with("deemer/config.yaml"), "{path:?}");
+        assert!(
+            !path.to_string_lossy().contains("Library"),
+            "macOS must not use ~/Library: {path:?}"
+        );
+    }
 
     #[test]
     fn round_trips_through_yaml() {

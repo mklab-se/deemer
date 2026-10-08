@@ -31,7 +31,7 @@ struct CrateInfo {
 }
 
 fn cache_path() -> Option<PathBuf> {
-    dirs::cache_dir().map(|d| d.join("deemer").join("update-check.json"))
+    deemer_core::paths::cache_dir().map(|d| d.join("update-check.json"))
 }
 
 fn read_cache() -> Option<UpdateCache> {

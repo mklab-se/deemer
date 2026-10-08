@@ -30,7 +30,6 @@ tracing-subscriber.workspace = true
 reqwest.workspace = true
 semver.workspace = true
 chrono.workspace = true
-dirs.workspace = true
 
 [package.metadata.binstall]
 pkg-url = "{ repo }/releases/download/v{ version }/deemer-v{ version }-{ target }.{ archive-format }"

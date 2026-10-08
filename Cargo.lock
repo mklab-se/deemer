@@ -632,7 +632,6 @@ dependencies = [
  "clap_complete",
  "colored",
  "deemer-core",
- "dirs",
  "reqwest",
  "semver",
  "serde",

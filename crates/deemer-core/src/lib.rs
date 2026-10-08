@@ -12,6 +12,7 @@ pub mod config;
 pub mod error;
 pub mod expr;
 pub mod judge;
+pub mod paths;
 pub mod results;
 pub mod suite;
 pub mod template;

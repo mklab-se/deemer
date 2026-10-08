@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Changed
+
+- Config and cache now follow the XDG layout on macOS as well as Linux, the same as Ailloy and
+  every MKLab tool: config in `$XDG_CONFIG_HOME/deemer` (default `~/.config/deemer`), cache (the
+  update-check file) in `$XDG_CACHE_HOME/deemer` (default `~/.cache/deemer`). XDG variables are
+  used only when they are absolute paths. Windows keeps `%APPDATA%\deemer` and
+  `%LOCALAPPDATA%\deemer`. The new `paths` module in `deemer-core` is the single place that
+  decides.
+- macOS: the old locations under `~/Library` are no longer read and nothing is migrated. To keep
+  an existing config, move it:
+  `mkdir -p ~/.config && mv ~/Library/Application\ Support/deemer ~/.config/deemer`.
+  The old cache can simply be deleted: `rm -rf ~/Library/Caches/deemer`.
+
 ## [0.4.2] - 2026-10-08
 
 ### Changed
